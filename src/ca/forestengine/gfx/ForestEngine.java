@@ -1,12 +1,14 @@
 package ca.forestengine.gfx;
 
 import ca.forestengine.main.Environment;
+import ca.forestengine.main.FObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.math.BigDecimal;
 
 public class ForestEngine extends Canvas implements Runnable{
     /*Constants*/
@@ -28,8 +30,8 @@ public class ForestEngine extends Canvas implements Runnable{
     private Thread thread;
     private BufferedImage image = new BufferedImage(ForestEngine.WIDTH, ForestEngine.HEIGHT, BufferedImage.TYPE_INT_RGB);
 
-    int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-    static byte GRID_MODE = 0;
+    protected int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
+    protected static byte GRID_MODE = 0;
 
     public void set_environment(Environment environment){
         this.environment = environment;
@@ -50,6 +52,16 @@ public class ForestEngine extends Canvas implements Runnable{
     }
     public void set_grid_mode(byte GRID_MODE){
         this.GRID_MODE = GRID_MODE;
+    }
+    public static void LOG(String msg){
+        System.out.println("LOG: " + msg);
+    }
+    public static void WARN(System msg){
+        System.err.println("WARN: " + msg);
+    }
+    public static void ERR(String msg){
+        System.err.println("ERR: " + msg);
+        System.exit(1);
     }
 
     public void init(){
@@ -79,11 +91,13 @@ public class ForestEngine extends Canvas implements Runnable{
 
     private void update(double dt){
         this.environment.update(dt);
+
+        for(FObject o: this.environment.OBJECTS){
+            o.update(dt);
+        }
     }
 
     private void render(){
-        GRAPHICS.clear();
-
         BufferStrategy bs = this.getBufferStrategy();
 
         if(bs == null){
@@ -92,6 +106,11 @@ public class ForestEngine extends Canvas implements Runnable{
         }
 
         java.awt.Graphics g = bs.getDrawGraphics();
+
+        this.environment.render();
+        for(FObject o: Environment.OBJECTS){
+            o.render();
+        }
 
         GRAPHICS.rasterize();
 
@@ -130,33 +149,34 @@ public class ForestEngine extends Canvas implements Runnable{
     }
     private void run_internal(){
         if(ForestEngine.ENGINE_MODE == ForestEngine.WITH_GRAPICS) {
-            long lastTime = System.nanoTime();
-            final double amountOfTicks = 60.0;
-            double ns = 1000000000 / amountOfTicks;
-            double delta = 0;
-            int updates = 0;
+            long last_time = System.nanoTime();
+            long time_per_update = 1000000000 / 60;
+
+            long last_log_time = System.currentTimeMillis();
+
             int frames = 0;
-            long timer = System.currentTimeMillis();
+            int updates = 0;
 
-            while (RUNNING) {
+            while (RUNNING){
                 long now = System.nanoTime();
+                long cur_log_time = System.currentTimeMillis();
 
-                delta += (now - lastTime) / ns;
-                lastTime = now;
+                if (now - last_time > time_per_update){
+                    BigDecimal now_b = new BigDecimal(now);
+                    BigDecimal last_b = new BigDecimal(last_time);
 
-                if (delta >= 1) {
-                    update(delta);
+                    update(now_b.subtract(last_b).divide(new BigDecimal(1000000000)).doubleValue());
+                    render();
+
                     updates++;
-                    delta--;
+                    frames++;
+                    last_time = now;
                 }
 
-                render();
-                frames++;
+                if(cur_log_time - last_log_time > 1000){
+                    System.out.println("Updates: " + updates + ", Frames: " + frames);
 
-                if (System.currentTimeMillis() - timer > 1000) {
-
-                    timer += 1000;
-                    System.out.println(updates + " TICKS, FPS " + frames);
+                    last_log_time = cur_log_time;
                     updates = 0;
                     frames = 0;
                 }
@@ -168,7 +188,11 @@ public class ForestEngine extends Canvas implements Runnable{
 
             while (RUNNING){
                 long now = System.nanoTime();
-                update(now - last_time);
+
+                BigDecimal now_b = new BigDecimal(now);
+                BigDecimal last_b = new BigDecimal(last_time);
+
+                update(now_b.subtract(last_b).divide(new BigDecimal(1000000000)).doubleValue());
 
                 last_time = now;
             }

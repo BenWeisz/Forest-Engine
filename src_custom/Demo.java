@@ -4,14 +4,14 @@ import ca.forestengine.gfx.ForestEngine;
 
 public class Demo extends Environment {
     public void init() {
-
+        this.add_object(new Bird());
     }
 
     public void update(double dt) {
-
+        //System.out.println(((Bird)objects.get(0)).get_count());
     }
 
-    public void render(Graphics graphics) {
+    public void render() {
 
     }
 
