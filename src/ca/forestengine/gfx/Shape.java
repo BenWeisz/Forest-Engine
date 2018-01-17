@@ -8,7 +8,7 @@ import java.util.ArrayList;
 class Shape extends Drawable{
     protected String type;
 
-    protected Colour colour;
+    protected int colour;
     protected ArrayList<Vec2D> verts;
 
     public Shape(String type, ArrayList<Vec2D> verts, Vec2D pos, FObject parent) {

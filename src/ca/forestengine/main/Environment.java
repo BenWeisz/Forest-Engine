@@ -12,8 +12,8 @@ public abstract class Environment {
         init();
     }
 
-    public void add_object(FObject object){
-        this.OBJECTS.add(object);
+    public static void add_object(FObject object){
+        Environment.OBJECTS.add(object);
 
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }

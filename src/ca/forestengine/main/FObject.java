@@ -81,6 +81,4 @@ public abstract class FObject {
     public abstract void update(double dt);
     public abstract void render();
     public abstract void dein();
-
-    public abstract int get_count();
 }

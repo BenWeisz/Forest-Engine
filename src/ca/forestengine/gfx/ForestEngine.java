@@ -45,7 +45,7 @@ public class ForestEngine extends Canvas implements Runnable{
             ForestEngine.HEIGHT = HEIGHT;
         }
         else
-            System.err.println("Window Cannot Be Resized After Initialized (init())!");
+            ForestEngine.WARN("Window Cannot Be Resized After Initialized (init())!");
     }
     public void set_title(String TITLE){
         ForestEngine.TITLE = TITLE;
@@ -56,7 +56,7 @@ public class ForestEngine extends Canvas implements Runnable{
     public static void LOG(String msg){
         System.out.println("LOG: " + msg);
     }
-    public static void WARN(System msg){
+    public static void WARN(String msg){
         System.err.println("WARN: " + msg);
     }
     public static void ERR(String msg){
