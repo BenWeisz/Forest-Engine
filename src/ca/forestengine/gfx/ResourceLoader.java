@@ -81,7 +81,7 @@ public class ResourceLoader {
         Graphics.IMAGE_SIZES.add(new Vec2D(width, height));
     }
     public static void new_image_pwt(String file_name, String image_name, int x_tile_width, int y_tile_height, int x, int y){
-        /*New Image Using Point-Width-Tiling Mode.*/
+        /*New Image Using Point-Width-Tiling Mode. */
         BufferedImage image = null;
 
         try{
