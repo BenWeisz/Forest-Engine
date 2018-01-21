@@ -14,8 +14,6 @@ public class ForestEngine extends Canvas implements Runnable{
     /*Constants*/
     public static final byte WITH_GRAPICS = 0;
     public static final byte WITHOUT_GRAPHICS = 1;
-    public static final byte GRAPHICS_MODE = 0;
-    public static final byte CARTESIAN_MODE = 1;
 
     public static int WIDTH = 640, HEIGHT = 480;
     public static String TITLE = "Forest-Engine";
@@ -28,10 +26,9 @@ public class ForestEngine extends Canvas implements Runnable{
     private static boolean FOREST_ENGINE_FLAG_INIT_COMPLETE = false;
     private JFrame frame;
     private Thread thread;
-    private BufferedImage image = new BufferedImage(ForestEngine.WIDTH, ForestEngine.HEIGHT, BufferedImage.TYPE_INT_RGB);
+    private BufferedImage image;
 
-    protected int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-    protected static byte GRID_MODE = 0;
+    protected int[] pixels;
 
     public void set_environment(Environment environment){
         this.environment = environment;
@@ -49,9 +46,6 @@ public class ForestEngine extends Canvas implements Runnable{
     }
     public void set_title(String TITLE){
         ForestEngine.TITLE = TITLE;
-    }
-    public void set_grid_mode(byte GRID_MODE){
-        this.GRID_MODE = GRID_MODE;
     }
     public static void LOG(String msg){
         System.out.println("LOG: " + msg);
@@ -82,6 +76,9 @@ public class ForestEngine extends Canvas implements Runnable{
             GRAPHICS = new Graphics(this);
 
             ForestEngine.FOREST_ENGINE_FLAG_RESIZE = true;
+
+            image = new BufferedImage(ForestEngine.WIDTH, ForestEngine.HEIGHT, BufferedImage.TYPE_INT_RGB);
+            pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
         }
 
         ForestEngine.FOREST_ENGINE_FLAG_INIT_COMPLETE = true;

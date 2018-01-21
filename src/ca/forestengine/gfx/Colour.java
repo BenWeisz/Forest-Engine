@@ -9,10 +9,12 @@ public class Colour {
     public static int RED = new Colour(0xED2B0E).get_colour_int();
     public static int GREEN = new Colour(0x48CE0E).get_colour_int();
     public static int BLUE = new Colour(0x0E5AD3).get_colour_int();
-    public static int YELOW = new Colour(0xEADB0E).get_colour_int();
+    public static int YELLOW = new Colour(0xEADB0E).get_colour_int();
     public static int PURPLE = new Colour(0xA90FD8).get_colour_int();
     public static int ORANGE = new Colour(0xFF800A).get_colour_int();
     public static int PINK = new Colour(0xFC92E5).get_colour_int();
+    public static int DARK_GREY = new Colour(0x202020).get_colour_int();
+    public static int LIGHT_GREY = new Colour(0xEFEFEA).get_colour_int();
 
 
     public Colour(int colour_int){

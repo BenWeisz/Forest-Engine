@@ -4,10 +4,10 @@ import ca.forestengine.main.FObject;
 
 public class Bird extends FObject {
     public void init() {
-        this.add_sprite("bird");
+        this.add_sprite("Bird");
 
         this.pos.translate(100, 100);
-        this.sprites.get(0).set_scale(4, 4);
+        this.sprites.get(0).set_scale(5, 5);
     }
 
     public void update(double dt) {

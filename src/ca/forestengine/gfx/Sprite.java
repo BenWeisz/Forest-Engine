@@ -4,21 +4,21 @@ import ca.forestengine.main.FObject;
 import ca.forestengine.main.Vec2D;
 
 public class Sprite extends Drawable{
-    private String asset_name;
+    private String resource_name;
     private int ID;
     private boolean active = true;
     private Vec2D scale;
 
-    public Sprite(String asset_name, Vec2D pos, FObject parent) {
+    public Sprite(String resource_name, Vec2D pos, FObject parent) {
         super(pos, parent);
 
-        this.asset_name = asset_name;
+        this.resource_name = resource_name;
         this.ID = this.hashCode();
         this.scale = new Vec2D(1f, 1f);
     }
 
-    public String get_asset_name(){
-        return this.asset_name;
+    public String get_resource_name(){
+        return this.resource_name;
     }
     public int get_layer(){
         return this.layer;
@@ -33,10 +33,10 @@ public class Sprite extends Drawable{
         return this.scale.clone();
     }
     public Vec2D get_size(){
-        int image_pos = Graphics.get_image_number(asset_name);
+        int image_pos = Graphics.get_image_number(this.resource_name);
 
         if(image_pos != -1){
-            return Graphics.IMAGE_SIZES.get(image_pos).clone();
+            return Graphics.IMAGES.get(image_pos).get_size();
         }
 
         return null;

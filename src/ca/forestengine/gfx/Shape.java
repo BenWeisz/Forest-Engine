@@ -6,6 +6,8 @@ import ca.forestengine.main.Vec2D;
 import java.util.ArrayList;
 
 class Shape extends Drawable{
+    /* All Vec2Ds In verts Are Point Vectors*/
+
     protected String type;
 
     protected int colour;

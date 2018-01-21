@@ -40,7 +40,7 @@ public abstract class FObject {
     }
     public void remove_sprite(String asset_name){
         for (Sprite sprite: sprites) {
-            if(sprite.get_asset_name() == asset_name){
+            if(sprite.get_resource_name() == asset_name){
                 Graphics.remove_drawable(sprite);
                 sprites.remove(sprite);
                 break;

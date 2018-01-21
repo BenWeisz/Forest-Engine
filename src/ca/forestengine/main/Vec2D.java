@@ -39,4 +39,13 @@ public class Vec2D {
 
         Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
+    public void swap(Vec2D other){
+        Vec2D temp = new Vec2D(this.x, this.y);
+
+        this.x = other.X();
+        this.y = other.Y();
+
+        other.x = temp.X();
+        other.y = temp.Y();
+    }
 }
