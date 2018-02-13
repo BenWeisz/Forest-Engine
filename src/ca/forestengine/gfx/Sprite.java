@@ -4,17 +4,21 @@ import ca.forestengine.main.FObject;
 import ca.forestengine.main.Vec2D;
 
 public class Sprite extends Drawable{
+
+
     private String resource_name;
     private int ID;
     private boolean active = true;
     private Vec2D scale;
+    private String tag;
 
     public Sprite(String resource_name, Vec2D pos, FObject parent) {
         super(pos, parent);
 
         this.resource_name = resource_name;
-        this.ID = this.hashCode();
+        this.ID = ForestEngine.next_ID();
         this.scale = new Vec2D(1f, 1f);
+        this.tag = "";
     }
 
     public String get_resource_name(){
@@ -41,6 +45,9 @@ public class Sprite extends Drawable{
 
         return null;
     }
+    public String get_tag(){
+        return this.tag;
+    }
 
     public void set_active(boolean toggle){
         this.active = toggle;
@@ -53,5 +60,7 @@ public class Sprite extends Drawable{
     public void set_scale(int x, int y){
         this.scale.set(x, y);
     }
-
+    public void set_tag(String tag){
+        this.tag = tag;
+    }
 }

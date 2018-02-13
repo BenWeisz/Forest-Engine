@@ -18,5 +18,7 @@ class Shape extends Drawable{
 
         this.type = type;
         this.verts = verts;
+
+        Graphics.SHAPE_COUNT++;
     }
 }

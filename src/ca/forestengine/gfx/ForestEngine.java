@@ -1,5 +1,7 @@
 package ca.forestengine.gfx;
 
+import ca.forestengine.input.Keyboard;
+import ca.forestengine.input.Mouse;
 import ca.forestengine.main.Environment;
 import ca.forestengine.main.FObject;
 
@@ -18,12 +20,16 @@ public class ForestEngine extends Canvas implements Runnable{
     public static int WIDTH = 640, HEIGHT = 480;
     public static String TITLE = "Forest-Engine";
     public static Graphics GRAPHICS;
+    public static int WINDOW_X, WINDOW_Y;
+    public static Mouse MOUSE;
+    public static Keyboard KEYBOARD;
     public Environment environment;
 
     private static byte ENGINE_MODE = 0;
     private boolean RUNNING = false;
     private static boolean FOREST_ENGINE_FLAG_RESIZE = false;
     private static boolean FOREST_ENGINE_FLAG_INIT_COMPLETE = false;
+    private static int NEXT_ID = 0;
     private JFrame frame;
     private Thread thread;
     private BufferedImage image;
@@ -42,18 +48,18 @@ public class ForestEngine extends Canvas implements Runnable{
             ForestEngine.HEIGHT = HEIGHT;
         }
         else
-            ForestEngine.WARN("Window Cannot Be Resized After Initialized (init())!");
+            ForestEngine.WARN("WARNING!!! Window Cannot Be Resized After Initialized (init())!");
     }
     public void set_title(String TITLE){
         ForestEngine.TITLE = TITLE;
     }
-    public static void LOG(String msg){
+    public static void LOG(Object msg){
         System.out.println("LOG: " + msg);
     }
-    public static void WARN(String msg){
+    public static void WARN(Object msg){
         System.err.println("WARN: " + msg);
     }
-    public static void ERR(String msg){
+    public static void ERR(Object msg){
         System.err.println("ERR: " + msg);
         System.exit(1);
     }
@@ -61,8 +67,10 @@ public class ForestEngine extends Canvas implements Runnable{
     public void init(){
         if(ForestEngine.ENGINE_MODE == ForestEngine.WITH_GRAPICS) {
             Dimension size = new Dimension(ForestEngine.WIDTH, ForestEngine.HEIGHT);
+            ImageIcon icon = new ImageIcon("res/forest.png");
 
             frame = new JFrame(ForestEngine.TITLE);
+            frame.setIconImage(icon.getImage());
             frame.setMaximumSize(size);
             frame.setPreferredSize(size);
             frame.setMinimumSize(size);
@@ -74,11 +82,18 @@ public class ForestEngine extends Canvas implements Runnable{
             frame.setVisible(true);
 
             GRAPHICS = new Graphics(this);
+            MOUSE = new Mouse();
+            KEYBOARD = new Keyboard();
+
+            this.addMouseListener(MOUSE);
+            this.addKeyListener(KEYBOARD);
 
             ForestEngine.FOREST_ENGINE_FLAG_RESIZE = true;
 
             image = new BufferedImage(ForestEngine.WIDTH, ForestEngine.HEIGHT, BufferedImage.TYPE_INT_RGB);
             pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
+
+            requestFocus();
         }
 
         ForestEngine.FOREST_ENGINE_FLAG_INIT_COMPLETE = true;
@@ -92,13 +107,21 @@ public class ForestEngine extends Canvas implements Runnable{
         for(FObject o: this.environment.OBJECTS){
             o.update(dt);
         }
+
+        if (ForestEngine.ENGINE_MODE == ForestEngine.WITH_GRAPICS) {
+            ForestEngine.WINDOW_X = this.frame.getX();
+            ForestEngine.WINDOW_Y = this.frame.getY();
+
+            ForestEngine.MOUSE.update();
+            ForestEngine.KEYBOARD.update();
+        }
     }
 
     private void render(){
         BufferStrategy bs = this.getBufferStrategy();
 
         if(bs == null){
-            createBufferStrategy(3);
+            createBufferStrategy(2);
             return;
         }
 
@@ -196,5 +219,10 @@ public class ForestEngine extends Canvas implements Runnable{
         }
 
         stop();
+    }
+
+    public static int next_ID(){
+        NEXT_ID++;
+        return NEXT_ID - 1;
     }
 }

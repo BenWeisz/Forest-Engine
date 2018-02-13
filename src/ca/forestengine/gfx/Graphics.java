@@ -24,6 +24,7 @@ public class Graphics {
     private static ArrayList<Drawable> DRAWABLES = new ArrayList<Drawable>();
 
     protected static ArrayList<Image> IMAGES = new ArrayList<Image>();
+    protected static int SHAPE_COUNT = 0;
 
     public Graphics(ForestEngine engine){
         this.engine = engine;
@@ -94,7 +95,7 @@ public class Graphics {
         }
     }
     private void draw_line(Shape line){
-        /* Bresenhams Line Algorithm. +Vertical Line TODO +Line Thickness*/
+        /* Bresenhams Line Algorithm. +Vertical Line*/
 
         Vec2D p1 = line.verts.get(0).clone();
         Vec2D p2 = line.verts.get(1).clone();
@@ -111,28 +112,54 @@ public class Graphics {
         float delta_y = p2.Y() - p1.Y();
 
         if(delta_x != 0) {
-            float delta_error = Math.abs(delta_y / delta_x);
-            float error = 0.0f;
+            if(delta_y / delta_x < 1.0 && delta_y / delta_x > -1.0) {
+                float delta_error = Math.abs(delta_y / delta_x);
+                float error = 0.0f;
 
-            int y = (int) p1.Y();
-            for (int x = (int) p1.X(); x < p2.X(); x++) {
+                int y = (int) p1.Y();
+                for (int x = (int) p1.X(); x < p2.X(); x++) {
 
-                try {
-                    engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
-                } catch (ArrayIndexOutOfBoundsException e) {}
+                    try {
+                        engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                    }
 
-                error += delta_error;
-                while (error >= 0.5f) {
-                    y += Math.signum(delta_y);
-                    error -= 1.0f;
+                    error += delta_error;
+                    while (error >= 0.5f) {
+                        y += Math.signum(delta_y);
+                        error -= 1.0f;
+                    }
+                }
+            }
+            else{
+                if(p1.Y() > p2.Y())
+                    p1.swap(p2);
+
+                delta_x = p2.X() - p1.X();
+                delta_y = p2.Y() - p1.Y();
+
+                float delta_error = Math.abs(delta_x / delta_y);
+                float error = 0.0f;
+
+                int x = (int) p1.X();
+                for (int y = (int) p1.Y(); y < p2.Y(); y++) {
+
+                    try {
+                        engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                    }
+
+                    error += delta_error;
+                    while (error >= 0.5f) {
+                        x += Math.signum(delta_x);
+                        error -= 1.0f;
+                    }
                 }
             }
         }
         else {
             if(p1.Y() > p2.Y())
                 p1.swap(p2);
-
-            delta_y = p2.Y() - p1.Y();
 
             for(int y = (int)p1.Y(); y < p2.Y(); y++){
                 try {
@@ -156,7 +183,11 @@ public class Graphics {
             for(int y_scale = 0; y_scale < scale.Y(); y_scale++) {
                 for (int x = 0; x < dim.X(); x++) {
                     for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
-                        engine.pixels[(int)(((top.Y() + (y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + top.X() + (x * scale.X()) + x_scale)] = pixels[(int)((y * dim.X()) + x)];
+                        try {
+                            // Make this camera based!
+                            if (top.X() + (x * scale.X()) + x_scale > 0 && top.X() + (x * scale.X()) + x_scale < ForestEngine.WIDTH)
+                                engine.pixels[(int)(((top.Y() + (y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + top.X() + (x * scale.X()) + x_scale)] = pixels[(int)((y * dim.X()) + x)];
+                        }catch (Exception e){}
                     }
                 }
             }
@@ -202,7 +233,8 @@ public class Graphics {
             Graphics.GRAPICS_FLAG_RENDER_CHANGE = false;
         }
 
-        clear_shapes();
+        if(SHAPE_COUNT > 0)
+            clear_shapes();
     }
 
     private void clear_shapes(){
@@ -217,6 +249,8 @@ public class Graphics {
             else
                 pos++;
         }
+
+        SHAPE_COUNT = 0;
     }
     protected static int get_image_number(String name){
         int image_pos = -1;
@@ -229,7 +263,7 @@ public class Graphics {
         }
 
         if(image_pos == -1){
-            ForestEngine.WARN("No Such Asset Exists: " + name);
+            ForestEngine.WARN("WARNING!!! No Such Asset Exists: " + name);
         }
 
         return image_pos;

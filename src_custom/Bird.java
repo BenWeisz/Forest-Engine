@@ -1,17 +1,32 @@
 import ca.forestengine.gfx.Colour;
+import ca.forestengine.gfx.ForestEngine;
 import ca.forestengine.gfx.Graphics;
+import ca.forestengine.input.Keyboard;
+import ca.forestengine.input.Mouse;
 import ca.forestengine.main.FObject;
+import ca.forestengine.main.Vec2D;
 
 public class Bird extends FObject {
     public void init() {
-        this.add_sprite("Bird");
-
-        this.pos.translate(100, 100);
-        this.sprites.get(0).set_scale(5, 5);
+//        for(int y = 0; y < 30; y++){
+//            for(int x = 0; x < 40; x++){
+//                add_sprite("bird", new Vec2D(x * 16, y * 16), 0, null);
+//            }
+//        }
+        add_sprite("bird", new Vec2D(0, 0), 0, null);
     }
 
     public void update(double dt) {
-        //this.pos.translate(1, 1);
+//        if (ForestEngine.KEYBOARD.get_input("DOWN", Keyboard.HIT))
+//            this.pos.translate(0, 5);
+//        if (ForestEngine.KEYBOARD.get_input("RIGHT", Keyboard.HELD))
+//            this.pos.translate(5, 0);
+
+//        if(ForestEngine.MOUSE.get_input("LMB", Mouse.HIT)) {
+//            this.pos.set(ForestEngine.MOUSE.X - 8, ForestEngine.MOUSE.Y - 8);
+//        }
+        //his.pos.translate(-1, 0);
+
     }
 
     public void render() {
@@ -28,7 +43,9 @@ public class Bird extends FObject {
 //        Graphics.DRAW_COLOUR = Colour.GREEN;
 //        Graphics.DRAW_LAYER = 1000;
 //        Graphics.rect(new float[]{20f, 20f, 50f, 75f}, this);
-
+//        Graphics.DRAW_COLOUR = Colour.PINK;
+//        Graphics.DRAW_LAYER = 0;
+//        Graphics.line(new Vec2D(100, 100), new Vec2D(-50, 50), this);
     }
 
     public void dein() {

@@ -1,0 +1,32 @@
+ Things To Add:
+================
+- Input (Mouse & Keyboard)
+- Sound
+- Text Rendering
+- Object Update Order
+- Camera
+- Add Different Drawing Areas
+- Resource Animation Sets
+
+- Document Each Function
+- When doing viewport fix sprite bounding
+        - Do The Same For Rect, Line and all the shapes
+- Remove Unneccesary Imports --- DONE!!! - RECHECK
+- Check for no gui effieciencies
+
+ Naming
+========
+- Use underscores to name the variables
+- Use CAPITAL letters for static variables
+
+- Private variables allways bellow Publics
+- For Members Variables always use this.
+
+
+Add Ability to add new Input Axis
+Input
+FArea - Area to draw (within screen)
+Camera
+===========
+ THE STACK
+===========

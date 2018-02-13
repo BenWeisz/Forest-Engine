@@ -3,7 +3,11 @@ package ca.forestengine.main;
 import ca.forestengine.gfx.Graphics;
 
 public class Vec2D {
+    public final static boolean GRAPICS_MODE = true;
+    public final static boolean NO_GRAPHICS_MODE = false;
+
     private float x = 0.0f, y = 0.0f;
+    private boolean graphics_mode = true;
 
     public Vec2D(){}
     public Vec2D(float x, float y){
@@ -31,13 +35,15 @@ public class Vec2D {
         this.x += (float)x;
         this.y += (float)y;
 
-        Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
+        if (this.graphics_mode)
+            Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public void set(float x, float y){
         this.x = x;
         this.y = y;
 
-        Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
+        if (this.graphics_mode)
+            Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public void swap(Vec2D other){
         Vec2D temp = new Vec2D(this.x, this.y);
@@ -47,5 +53,9 @@ public class Vec2D {
 
         other.x = temp.X();
         other.y = temp.Y();
+    }
+
+    public void set_graphics_mode(boolean graphics_mode){
+        this.graphics_mode = graphics_mode;
     }
 }

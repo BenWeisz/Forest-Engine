@@ -1,7 +1,6 @@
 package ca.forestengine.gfx;
 
 import ca.forestengine.main.Vec2D;
-import com.sun.org.apache.regexp.internal.RE;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,8 +14,7 @@ public class ResourceLoader {
     public static final int OFFSET_SIZE_MODE = 2;
     public static final int FULL_MODE = 3;
 
-
-    private static String file_name, resource_name;
+    private static String file_name;
     private static String supported_files = "Images: .png";
     private static BufferedImage loaded_image = null;
     private static int IMAGE_MODE = ResourceLoader.OFFSET_SIZE_MODE;
@@ -26,21 +24,13 @@ public class ResourceLoader {
     }
 
     public static void load_resource(String file_name){
-        ResourceLoader.load(file_name, ResourceLoader.chop_extension(file_name));
-    }
-    public static void load_resource(String file_name, String resource_name){
-        ResourceLoader.load(file_name, resource_name);
-    }
-
-    private static void load(String file_name, String resource_name){
         ResourceLoader.file_name = file_name;
-        ResourceLoader.resource_name = resource_name;
 
         if(ResourceLoader.chop_name(file_name).equals("png")){
             try {
                 ResourceLoader.loaded_image = ImageIO.read(new File("res/" + file_name));
             } catch (IOException e){
-                ForestEngine.ERR("Image: " + file_name + " could not be loaded!");
+                ForestEngine.ERR("Resource: " + file_name + " could not be loaded!");
             }
         }
         else ForestEngine.WARN("Not Supported File Type: " + ResourceLoader.chop_name(file_name));
@@ -49,9 +39,9 @@ public class ResourceLoader {
     public static void set_image_mode(int mode){
         ResourceLoader.IMAGE_MODE = mode;
     }
-    public static void cut_image(Vec2D vec1, Vec2D vec2){
+    public static void cut_image(Vec2D vec1, Vec2D vec2, String image_name){
         if(loaded_image == null)
-            ForestEngine.WARN("No Image Was Loaded Prior To Cutting!");
+            ForestEngine.WARN("WARNING!!! No Image Was Loaded Prior To Cutting!");
         else if(ResourceLoader.IMAGE_MODE == ResourceLoader.GRID_MODE){
             /* vec1 = Position Vector, vec2 = Tile Dimension Vector */
 
@@ -61,7 +51,7 @@ public class ResourceLoader {
             int[] pixels = ResourceLoader.loaded_image.getRGB((int)(vec1.X() * vec2.X()),
                     (int)(vec1.Y() * vec2.Y()), (int)vec2.X(), (int)vec2.Y(), null, 0, (int)vec2.X());
 
-            Image image = new Image(ResourceLoader.resource_name, vec2, pixels);
+            Image image = new Image(image_name, vec2, pixels);
             Graphics.IMAGES.add(image);
         }
         else if(ResourceLoader.IMAGE_MODE == ResourceLoader.POINT_POINT_MODE){
@@ -72,7 +62,7 @@ public class ResourceLoader {
             int[] pixels = ResourceLoader.loaded_image.getRGB((int)vec1.X(), (int)vec1.Y(),
                     (int)(vec2.X() - vec1.X()), (int)(vec2.Y() - vec1.Y()), null, 0, (int)(vec2.X() - vec1.X()));
 
-            Image image = new Image(ResourceLoader.resource_name, new Vec2D(vec2.X() - vec1.X(), vec2.Y() - vec1.Y()), pixels);
+            Image image = new Image(image_name, new Vec2D(vec2.X() - vec1.X(), vec2.Y() - vec1.Y()), pixels);
             Graphics.IMAGES.add(image);
         }
         else if(ResourceLoader.IMAGE_MODE == ResourceLoader.OFFSET_SIZE_MODE){
@@ -83,7 +73,7 @@ public class ResourceLoader {
             int[] pixels = ResourceLoader.loaded_image.getRGB((int)vec1.X(), (int)vec1.Y(),
                     (int)vec2.X(), (int)vec2.Y(), null, 0, (int)vec2.X());
 
-            Image image = new Image(ResourceLoader.resource_name, vec2, pixels);
+            Image image = new Image(image_name, vec2, pixels);
             Graphics.IMAGES.add(image);
 
         }
@@ -93,7 +83,7 @@ public class ResourceLoader {
             int[] pixels = ResourceLoader.loaded_image.getRGB(0, 0, ResourceLoader.loaded_image.getWidth(),
                     ResourceLoader.loaded_image.getHeight(), null, 0, ResourceLoader.loaded_image.getWidth());
 
-            Image image = new Image(ResourceLoader.resource_name, new Vec2D(ResourceLoader.loaded_image.getWidth(),
+            Image image = new Image(image_name, new Vec2D(ResourceLoader.loaded_image.getWidth(),
                     ResourceLoader.loaded_image.getHeight()), pixels);
             Graphics.IMAGES.add(image);
         }
