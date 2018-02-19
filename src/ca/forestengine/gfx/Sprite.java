@@ -5,7 +5,6 @@ import ca.forestengine.main.Vec2D;
 
 public class Sprite extends Drawable{
 
-
     private String resource_name;
     private int ID;
     private boolean active = true;

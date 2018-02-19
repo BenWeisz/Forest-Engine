@@ -27,10 +27,19 @@ public class Graphics {
     protected static int SHAPE_COUNT = 0;
 
     public Graphics(ForestEngine engine){
+        /* Class Constructor: Graphics(ForestEngine engine)
+        *  @Params: engine: The Engine Which This Graphics
+        *                   Class Works For.
+        *  @Return: None
+        *  @Design: Initialize A New Graphics System.*/
         this.engine = engine;
     }
 
     public void clear(){
+        /* Method: clear()
+        *  @Params: None
+        *  @Return: None
+        *  @Design: Clear The Engine's Raster.*/
         for (int y = 0; y < ForestEngine.HEIGHT; y++){
             for(int x = 0; x < ForestEngine.WIDTH; x++){
                     engine.pixels[(y * ForestEngine.WIDTH) + x] = Graphics.BACK_COLOUR;
@@ -38,14 +47,35 @@ public class Graphics {
         }
     }
     public static void remove_drawable(Drawable drawable){
+        /* Method: remove_drawable(Drawable drawable)
+        *  @Params: drawable: The Drawable Object That Is
+        *                     To Be Removed For The List Of
+        *                     Graphics Objects That Will Be
+        *                     Rendered.
+        *  @Return: None
+        *  @Design: Remove The Given Drawable For The Drawables
+        *           List.*/
         DRAWABLES.remove(drawable);
     }
     public static void add_drawable(Drawable drawable){
+        /* Method: add_drawable(Drawable drawable)
+        *  @Params: drawable: The Graphics Element That Is To
+        *                    Be Added To The List Of Drawables.
+        *  @Return: None
+        *  @Design: Add A Graphics Element To The Drawables List.*/
         DRAWABLES.add(drawable);
     }
 
     public static void rect(Vec2D vec1, Vec2D vec2, FObject parent){
-        /* vec1 = Point, vec2 = Size Vector*/
+        /* Method: rect(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Point At Which The Top Left Corner
+        *                 Of The Rectangle Is Located.
+        *           vec2: The Dimensions Of The Rectangle To Be
+        *                 Drawn.
+        *           parent: The FObject Which Triggered This Rectangle Draw.
+        *  @Return: None
+        *  @Design: Draw A Rectangle At The Given Point With The Given
+        *           Dimension.*/
 
         ArrayList<Vec2D> verts = new ArrayList<Vec2D>();
         verts.add(vec1);
@@ -60,7 +90,12 @@ public class Graphics {
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }
     public static void line(Vec2D vec1, Vec2D vec2, FObject parent){
-        /* vec1 = Point 1, vec2 = Point 2*/
+        /* Method: line(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Point At Which The Line Starts.
+        *           vec2: The Point At Which The Line Stops.
+        *           parent: The FObject Which Triggered This Line Draw.
+        *  @Return: None
+        *  @Design: Draw A Line From A Given Point To Another Point.*/
 
         ArrayList<Vec2D> verts = new ArrayList<Vec2D>();
         verts.add(vec1);
@@ -76,6 +111,11 @@ public class Graphics {
     }
 
     private void draw_rect(Shape rect){
+        /* Method: draw_rect(Shape rect)
+        *  @Params: rect: The Rectangle To Be Rasterized.
+        *  @Return: None
+        *  @Design: Internal Rasterization Of The
+        *           Given Shape As A Rectangle*/
         Vec2D top = rect.verts.get(0).clone();
         Vec2D bot = rect.verts.get(1).clone();
 
@@ -95,8 +135,12 @@ public class Graphics {
         }
     }
     private void draw_line(Shape line){
-        /* Bresenhams Line Algorithm. +Vertical Line*/
-
+        /* Method: draw_line(Shape line)
+        *  @Params: line: The Line To Be Rasterized.
+        *  @Return: None
+        *  @Design: Internal Rasterization Of The Given
+        *           Shape As A Line, Using Bresenham's
+        *           Algorithm In Two Directions.*/
         Vec2D p1 = line.verts.get(0).clone();
         Vec2D p2 = line.verts.get(1).clone();
 
@@ -170,6 +214,13 @@ public class Graphics {
     }
 
     private void draw_sprite(Sprite sprite, int image_pos){
+        /* Method: draw_sprite(Sprite sprite, int image_pos)
+        *  @Params: sprite: The Sprite That Is To Be Rasterized.
+        *           image_pos: The Position Of The Given Sprite
+        *                      In The Sprite List.
+        *  @Return: None
+        *  @Design: Rasterize The Given Sprite.*/
+
         // Break into sub-routines with different draw properties
 
         Vec2D top = sprite.pos;
@@ -195,6 +246,10 @@ public class Graphics {
     }
 
     protected void rasterize(){
+        /* Method: rasterize()
+        *  @Params: None
+        *  @Return: None
+        *  @Design: The Main Rasterization Call Of The Engine.*/
         if(GRAPICS_FLAG_LAYER_CHANGE){
             GRAPICS_FLAG_RENDER_CHANGE = true;
 
@@ -238,6 +293,12 @@ public class Graphics {
     }
 
     private void clear_shapes(){
+        /* Method: clear_shapes()
+        *  @Params: None
+        *  @Return: None
+        *  @Design: Clear All The Shapes From This
+        *           Frame's Shape List.*/
+
         int len = DRAWABLES.size();
         int pos = 0;
 
@@ -252,18 +313,24 @@ public class Graphics {
 
         SHAPE_COUNT = 0;
     }
-    protected static int get_image_number(String name){
+    protected static int get_image_number(String resource_name){
+        /* Method: get_image_number(String name)
+        *  @Params: resource_name: The Resource Name Of The Sprite.
+        *  @Return: int: The Position Of The Sprite With The Given
+        *                Resource Name.
+        *  @Design: Return The Image Position Of The Sprite With The
+        *           Given Resource Name.*/
         int image_pos = -1;
 
         for(int i = 0; i < Graphics.IMAGES.size(); i++){
-            if(Graphics.IMAGES.get(i).get_name() == name){
+            if(Graphics.IMAGES.get(i).get_name() == resource_name){
                 image_pos = i;
                 break;
             }
         }
 
         if(image_pos == -1){
-            ForestEngine.WARN("WARNING!!! No Such Asset Exists: " + name);
+            ForestEngine.WARN("WARNING!!! No Such Asset Exists: " + resource_name);
         }
 
         return image_pos;

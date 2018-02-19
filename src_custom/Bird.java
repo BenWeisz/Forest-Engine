@@ -14,15 +14,21 @@ public class Bird extends FObject {
 //            }
 //        }
         add_sprite("bird", new Vec2D(0, 0), 0, null);
+        get_sprite(0).set_scale(4, 4);
     }
 
     public void update(double dt) {
-//        if (ForestEngine.KEYBOARD.get_input("DOWN", Keyboard.HIT))
-//            this.pos.translate(0, 5);
+        if (ForestEngine.KEYBOARD.get_input("UP", Keyboard.HELD))
+            this.pos.translate(0, -5);
+        else if (ForestEngine.KEYBOARD.get_input("DOWN", Keyboard.HELD))
+            this.pos.translate(0, 5);
+        if (ForestEngine.KEYBOARD.get_input("RIGHT", Keyboard.HELD))
+            this.pos.translate(5, 0);
+        else if (ForestEngine.KEYBOARD.get_input("LEFT", Keyboard.HELD))
+            this.pos.translate(-5, 0);
 //        if (ForestEngine.KEYBOARD.get_input("RIGHT", Keyboard.HELD))
 //            this.pos.translate(5, 0);
-
-//        if(ForestEngine.MOUSE.get_input("LMB", Mouse.HIT)) {
+//        if(ForestEngine.MOUSE.get_input("NONE", Mouse.HIT)) {
 //            this.pos.set(ForestEngine.MOUSE.X - 8, ForestEngine.MOUSE.Y - 8);
 //        }
         //his.pos.translate(-1, 0);

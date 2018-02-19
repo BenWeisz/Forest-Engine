@@ -1,9 +1,7 @@
  Things To Add:
 ================
-- Input (Mouse & Keyboard)
 - Sound
 - Text Rendering
-- Object Update Order
 - Camera
 - Add Different Drawing Areas
 - Resource Animation Sets
@@ -14,6 +12,20 @@
 - Remove Unneccesary Imports --- DONE!!! - RECHECK
 - Check for no gui effieciencies
 
+-revamp load_image in resourceloader to accomodate for more types
+
+-Add ability to draw shapes from none Fobjects (hidden Fobject: The Camera)
+
+=-=-=-=-=-=-=-=
+ DOCUMENTATION
+=-=-=-=-=-=-=-=
+- Colour
+- Drawable
+- ForestEngine
+- Graphics
+- Image
+- ResourceLoader
+
  Naming
 ========
 - Use underscores to name the variables
@@ -22,9 +34,6 @@
 - Private variables allways bellow Publics
 - For Members Variables always use this.
 
-
-Add Ability to add new Input Axis
-Input
 FArea - Area to draw (within screen)
 Camera
 ===========

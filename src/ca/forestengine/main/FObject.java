@@ -85,7 +85,7 @@ public abstract class FObject {
                 return s;
         }
 
-        ForestEngine.WARN("WARNING!!! No Fobject Found With Tag: " + tag + "!");
+        ForestEngine.WARN("WARNING!!! No Fobject Found With Tag: " + tag);
         return null;
     }
     public String get_tag(){
