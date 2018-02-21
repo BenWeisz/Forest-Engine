@@ -6,7 +6,6 @@
 - Add Different Drawing Areas
 - Resource Animation Sets
 
-- Document Each Function
 - When doing viewport fix sprite bounding
         - Do The Same For Rect, Line and all the shapes
 - Remove Unneccesary Imports --- DONE!!! - RECHECK
