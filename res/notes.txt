@@ -25,6 +25,12 @@
 - Graphics
 - Image
 - ResourceLoader
+- Shape
+- Sprite
+- Keyboard
+- Mouse
+- Environment
+- FObject
 
  Naming
 ========

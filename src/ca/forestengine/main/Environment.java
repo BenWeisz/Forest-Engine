@@ -12,17 +12,29 @@ public abstract class Environment {
     private int ID;
 
     public Environment(){
+        /* Class Constructor: Environment()
+        *  @Params: None
+        *  @Return: None
+        *  @Design: A Class Meant To Aggregate And Control All Other Engine Objects.*/
         ID = ForestEngine.next_ID();
 
         init();
     }
 
     public static void add_object(FObject object){
+        /* Method: add_object(FObject object)
+        *  @Params: object: The New FObject To Be Added.
+        *  @Return: None
+        *  @Design: Add A New FObject To This Environment.*/
         Environment.OBJECTS.add(object);
 
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }
     public void remove_object_by_name(String object_name){
+        /* Method: remove_object_by_name(String object_name)
+        *  @Params: object_name: The Name Of The FObject To Be Removed.
+        *  @Return: None
+        *  @Design: Remove The Named FObject From The Environment.*/
         for(FObject o: Environment.OBJECTS) {
             String class_name = "";
             String full_name = o.getClass().getName();
@@ -50,6 +62,10 @@ public abstract class Environment {
         Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public void remove_object_by_ID(int ID){
+        /* Method: remove_object_by_ID(int ID)
+        *  @Params: ID: The ID Of The FObject To Be Removed.
+        *  @Return: None
+        *  @Design: Remove The FObject With The Provided ID From The Environment.*/
         for (FObject o: Environment.OBJECTS) {
             if(o.get_ID() == ID){
                 o.dein();
@@ -66,6 +82,10 @@ public abstract class Environment {
         Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public void remove_object_by_tag(String tag){
+        /* Method: remove_object_by_tag(String tag)
+        *  @Params: tag: The Tag Of The FObject To Be Removed.
+        *  @Return: None
+        *  @Design: Remove The FObject With The Provided Tag From The Environment.*/
         for (FObject o: Environment.OBJECTS){
             if (o.get_tag().equals(tag)){
                 o.dein();
@@ -82,6 +102,10 @@ public abstract class Environment {
         Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public int get_ID(){
+        /* Method: get_ID()
+        *  @Params: None
+        *  @Return int: The ID Of This Environment.
+        *  @Design Return The ID Of This Environment.*/
         return ID;
     }
 

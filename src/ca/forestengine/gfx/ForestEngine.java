@@ -61,7 +61,7 @@ public class ForestEngine extends Canvas implements Runnable{
     public static void ERR(Object msg){
         /* Method: ERR(Object msg)
         *  @Params: msg: The Message Of The Error.
-        *  @Return None
+        *  @Return: None
         *  @Design: Output The Error By Of The Message, Add Halt The Engine.*/
         System.err.println("ERR: " + msg);
         System.exit(1);
