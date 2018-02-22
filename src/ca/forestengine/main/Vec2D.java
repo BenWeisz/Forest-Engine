@@ -56,6 +56,18 @@ public class Vec2D {
         *  @Design: Subtract The Other Vector From This Vector.*/
         return new Vec2D(X() - other.X(), Y() - other.Y());
     }
+    public Vec2D scale(float scalar){
+        /* Method: scale(float scalar)
+        *  @Params: scalar: The Scalar To Multiply The Vector By.
+        *  @Return: Vec2D: The Scaled Vector.
+        *  @Design: Return The Scaled Vector.*/
+        Vec2D clone = this.clone();
+
+        clone.x *= scalar;
+        clone.y *= scalar;
+
+        return clone;
+    }
     public void translate(double x, double y){
         /* Method: translate(double x, double y)
         *  @Params: x: The X Translation Component.
@@ -94,6 +106,13 @@ public class Vec2D {
         other.y = temp.Y();
     }
 
+    public String toString(){
+        /* Method: toString()
+        *  @Params: None
+        *  @Return: String: The String Representation Of This Vector.
+        *  @Design: Return The String Representation Of This Vector.*/
+        return "(" + this.x + ", " + this.y + ")";
+    }
     public void set_graphics_mode(boolean graphics_mode){
         /* Method: set_graphics_mode(boolean graphics_mode)
         *  @Params: graphics_mode: The Graphics Mode Of This Vector.

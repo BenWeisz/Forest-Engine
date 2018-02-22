@@ -1,6 +1,7 @@
 import ca.forestengine.gfx.Colour;
 import ca.forestengine.gfx.Graphics;
 import ca.forestengine.gfx.ResourceLoader;
+import ca.forestengine.main.Camera;
 import ca.forestengine.main.Environment;
 import ca.forestengine.gfx.ForestEngine;
 import ca.forestengine.main.Vec2D;
@@ -10,11 +11,18 @@ import java.awt.event.KeyEvent;
 public class Demo extends Environment {
 
     public void init() {
-        Graphics.BACK_COLOUR = Colour.DARK_GREY;
+        Graphics.BACK_COLOUR = Colour. DARK_GREY;
         ResourceLoader.load_resource("spritesheet.png");
         ResourceLoader.cut_image(new Vec2D(0, 0), new Vec2D(16, 16), "bird");
 
-        Bird bird = new Bird();
+        Bird bird = new Bird(this);
+        Tree tree = new Tree(this);
+        Camera camera = new Camera(this);
+        camera.set_offset(new Vec2D(-ForestEngine.WIDTH / 2, -ForestEngine.HEIGHT/2));
+        camera.set_target(bird);
+        camera.set_follow_decay(0.05f);
+
+        this.set_camera(camera);
         ForestEngine.KEYBOARD.add_to_input("DOWN", new int[]{KeyEvent.VK_B, KeyEvent.VK_R});
     }
 

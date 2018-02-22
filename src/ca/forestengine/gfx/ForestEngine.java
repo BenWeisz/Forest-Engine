@@ -26,7 +26,6 @@ public class ForestEngine extends Canvas implements Runnable{
     public static Mouse MOUSE;
     public static Keyboard KEYBOARD;
 
-    private static Environment ENVIRONMENT;
     private static byte ENGINE_MODE = 0;
     private static byte INPUT_MODE = 0;
     private static boolean DEBUGGER_ACTIVE = true;
@@ -41,6 +40,7 @@ public class ForestEngine extends Canvas implements Runnable{
     private BufferedImage image;
 
     protected int[] pixels;
+    protected static Environment ENVIRONMENT;
 
     public static void LOG(Object msg){
         /* Method: LOG(Object msg)
@@ -214,7 +214,7 @@ public class ForestEngine extends Canvas implements Runnable{
         *  @Design: Preform All Engine Related Updates.*/
         ForestEngine.ENVIRONMENT.update(dt);
 
-        for(FObject o: ForestEngine.ENVIRONMENT.OBJECTS){
+        for(FObject o: ForestEngine.ENVIRONMENT.fobjects){
             o.update(dt);
         }
 
@@ -244,7 +244,7 @@ public class ForestEngine extends Canvas implements Runnable{
         java.awt.Graphics g = bs.getDrawGraphics();
 
         ForestEngine.ENVIRONMENT.render();
-        for(FObject o: Environment.OBJECTS){
+        for(FObject o: ENVIRONMENT.fobjects){
             o.render();
         }
 

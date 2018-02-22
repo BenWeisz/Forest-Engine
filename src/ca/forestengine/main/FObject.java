@@ -13,13 +13,15 @@ public abstract class FObject {
     private int ID;
     private boolean active = true;
     private String tag;
+    private Environment environment;
 
-    public FObject(){
+    public FObject(Environment environment){
         /* Class Constructor: FObject()
-        *  @Params: None
+        *  @Params: environment: The Environment In Which This FObject Exists.
         *  @Return: None
         *  @Design: An Object In The ForestEngine.*/
-        Environment.OBJECTS.add(this);
+        this.environment = environment;
+        this.environment.fobjects.add(this);
         this.sprites = new ArrayList<Sprite>();
         this.pos = new Vec2D();
         this.ID = ForestEngine.next_ID();

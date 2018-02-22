@@ -2,14 +2,17 @@
 ================
 - Sound
 - Text Rendering
-- Camera
-- Add Different Drawing Areas
+- Add Timers
+- Make A Rect And Line Drawer So That It Can Be Only On The Canvas And Not Relatvie.
 - Resource Animation Sets
-
-- When doing viewport fix sprite bounding
-        - Do The Same For Rect, Line and all the shapes
 - Remove Unneccesary Imports --- DONE!!! - RECHECK
 - Check for no gui effieciencies
+- Fix Decay Jumping Bug
+- Sort Out Camera So It Is Updated Last
+- Finish Revamp On Line Calls
+- Add Circle And Triangle Rendering
+- Add Shape Border Rendering
+- Add Line Thickness Rendering
 
 -revamp load_image in resourceloader to accomodate for more types
 
@@ -40,7 +43,6 @@
 - Private variables allways bellow Publics
 - For Members Variables always use this.
 
-FArea - Area to draw (within screen)
 Camera
 ===========
  THE STACK

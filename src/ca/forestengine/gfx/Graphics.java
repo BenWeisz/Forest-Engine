@@ -76,6 +76,60 @@ public class Graphics {
         *  @Return: None
         *  @Design: Draw A Rectangle At The Given Point With The Given
         *           Dimension.*/
+        Graphics.rect_internal(vec1, vec2, parent);
+    }
+    public static void rect(Vec2D vec1, Vec2D vec2){
+        /* Method: rect(Vec2D vec1, Vec2D vec2)
+        *  @Params: vec1: The Point At Which The Top Left Corner
+        *                 Of The Rectangle Is Located.
+        *           vec2: The Dimensions Of The Rectangle To Be
+        *                 Drawn.
+        *  @Return: None
+        *  @Design: Draw A Rectangle At The Given Point With The Given
+        *           Dimension.*/
+        Graphics.rect_internal(vec1, vec2, null);
+    }
+    public static void rect(float x, float y, float width, float height, FObject parent){
+        /* Method: rect(float x, float y, float width, float height, FObject parent)
+         *  @Params: x: The X Component At Which The Top Left Corner
+         *                 Of The Rectangle Is Located.
+         *           y: The Y Component At Which The Top Left Corner
+         *                 Of The Rectangle Is Located.
+         *           width: The Width Of The Rectangle To Be
+         *                 Drawn.
+         *          height: The Height Of The Rectangle To Be
+         *                 Drawn.
+         *           parent: The FObject Which Triggered This Rectangle Draw.
+         *  @Return: None
+         *  @Design: Draw A Rectangle At The Given Point With The Given
+         *           Dimension.*/
+        Graphics.rect_internal(new Vec2D(x, y), new Vec2D(width, height), parent);
+    }
+    public static void rect(float x, float y, float width, float height){
+        /* Method: rect(float x, float y, float width, float height, FObject parent)
+         *  @Params: x: The X Component At Which The Top Left Corner
+         *                 Of The Rectangle Is Located.
+         *           y: The Y Component At Which The Top Left Corner
+         *                 Of The Rectangle Is Located.
+         *           width: The Width Of The Rectangle To Be
+         *                 Drawn.
+         *          height: The Height Of The Rectangle To Be
+         *                 Drawn.
+         *  @Return: None
+         *  @Design: Draw A Rectangle At The Given Point With The Given
+         *           Dimension.*/
+        Graphics.rect_internal(new Vec2D(x, y), new Vec2D(width, height), null);
+    }
+    private static void rect_internal(Vec2D vec1, Vec2D vec2, FObject parent){
+        /* Method: rect_internal(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Point At Which The Top Left Corner
+        *                 Of The Rectangle Is Located.
+        *           vec2: The Dimensions Of The Rectangle To Be
+        *                 Drawn.
+        *           parent: The FObject Which Triggered This Rectangle Draw.
+        *  @Return: None
+        *  @Design: Draw A Rectangle At The Given Point With The Given
+        *           Dimension.*/
 
         ArrayList<Vec2D> verts = new ArrayList<Vec2D>();
         verts.add(vec1);
@@ -89,6 +143,7 @@ public class Graphics {
 
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }
+
     public static void line(Vec2D vec1, Vec2D vec2, FObject parent){
         /* Method: line(Vec2D vec1, Vec2D vec2, FObject parent)
         *  @Params: vec1: The Point At Which The Line Starts.
@@ -124,13 +179,18 @@ public class Graphics {
             bot = bot.add(rect.parent.pos);
         }
 
+        top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        bot = bot.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+
         for(int y = (int)top.Y(); y < (int)bot.Y(); y++){
-            for(int x = (int)top.X(); x < (int)bot.X(); x++){
+            for(int x = (int)top.X(); x < (int)bot.X(); x++) {
                 int pos = (y * ForestEngine.WIDTH) + x;
 
-                try {
-                    engine.pixels[pos] = rect.colour;
-                } catch (ArrayIndexOutOfBoundsException e){}
+                if (x >= 0 && x <= ForestEngine.WIDTH) {
+                    try {
+                        engine.pixels[pos] = rect.colour;
+                    } catch (ArrayIndexOutOfBoundsException e) {}
+                }
             }
         }
     }
@@ -152,6 +212,9 @@ public class Graphics {
             p2 = p2.add(line.parent.pos);
         }
 
+        p1 = p1.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        p2 = p2.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+
         float delta_x = p2.X() - p1.X();
         float delta_y = p2.Y() - p1.Y();
 
@@ -164,7 +227,8 @@ public class Graphics {
                 for (int x = (int) p1.X(); x < p2.X(); x++) {
 
                     try {
-                        engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                        if (x >= 0 && x <= ForestEngine.WIDTH)
+                            engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
                     } catch (ArrayIndexOutOfBoundsException e) {
                     }
 
@@ -189,7 +253,8 @@ public class Graphics {
                 for (int y = (int) p1.Y(); y < p2.Y(); y++) {
 
                     try {
-                        engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                        if (x >= 0 && x <= ForestEngine.WIDTH)
+                            engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
                     } catch (ArrayIndexOutOfBoundsException e) {
                     }
 
@@ -207,6 +272,7 @@ public class Graphics {
 
             for(int y = (int)p1.Y(); y < p2.Y(); y++){
                 try {
+                    if (p1.X() >= 0 && p1.X() <= ForestEngine.WIDTH)
                     engine.pixels[(y * ForestEngine.WIDTH) + (int)p1.X()] = line.colour;
                 } catch (ArrayIndexOutOfBoundsException e) {}
             }
@@ -229,16 +295,21 @@ public class Graphics {
         int[] pixels = Graphics.IMAGES.get(image_pos).get_pixels();
 
         top = top.add(sprite.parent.pos);
+        top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
 
-        for(int y = 0; y < dim.Y(); y++){
-            for(int y_scale = 0; y_scale < scale.Y(); y_scale++) {
-                for (int x = 0; x < dim.X(); x++) {
+        Vec2D start = top;
+        Vec2D stop = top.add(dim);
+
+        for (int y = (int)start.Y(); y < (int)stop.Y(); y++){
+            for (int y_scale = 0; y_scale < scale.Y(); y_scale++){
+                for (int x = (int)start.X(); x < (int)stop.X(); x++) {
                     for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
-                        try {
-                            // Make this camera based!
-                            if (top.X() + (x * scale.X()) + x_scale > 0 && top.X() + (x * scale.X()) + x_scale < ForestEngine.WIDTH)
-                                engine.pixels[(int)(((top.Y() + (y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + top.X() + (x * scale.X()) + x_scale)] = pixels[(int)((y * dim.X()) + x)];
-                        }catch (Exception e){}
+                        if (x >= 0 && x <= ForestEngine.WIDTH) {
+                            try {
+                                engine.pixels[(int)((((y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + (x * scale.X()) + x_scale)] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
+                                //engine.pixels[(y * ForestEngine.WIDTH) + x] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
+                            } catch (Exception e) {}
+                        }
                     }
                 }
             }

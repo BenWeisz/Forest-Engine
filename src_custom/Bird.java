@@ -3,10 +3,15 @@ import ca.forestengine.gfx.ForestEngine;
 import ca.forestengine.gfx.Graphics;
 import ca.forestengine.input.Keyboard;
 import ca.forestengine.input.Mouse;
+import ca.forestengine.main.Environment;
 import ca.forestengine.main.FObject;
 import ca.forestengine.main.Vec2D;
 
 public class Bird extends FObject {
+    public Bird(Environment environment) {
+        super(environment);
+    }
+
     public void init() {
 //        for(int y = 0; y < 30; y++){
 //            for(int x = 0; x < 40; x++){
@@ -31,7 +36,7 @@ public class Bird extends FObject {
 //        if(ForestEngine.MOUSE.get_input("NONE", Mouse.HIT)) {
 //            this.pos.set(ForestEngine.MOUSE.X - 8, ForestEngine.MOUSE.Y - 8);
 //        }
-        //his.pos.translate(-1, 0);
+        //this.pos.translate(-1, 0);
 
     }
 
