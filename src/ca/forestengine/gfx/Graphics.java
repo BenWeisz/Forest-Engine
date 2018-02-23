@@ -297,23 +297,54 @@ public class Graphics {
         top = top.add(sprite.parent.pos);
         top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
 
-        Vec2D start = top;
-        Vec2D stop = top.add(dim);
+        //Temp
+        //Scaling
+        int[] pixels_scale = new int[(int)(pixels.length * scale.X() * scale.Y())];
 
-        for (int y = (int)start.Y(); y < (int)stop.Y(); y++){
-            for (int y_scale = 0; y_scale < scale.Y(); y_scale++){
-                for (int x = (int)start.X(); x < (int)stop.X(); x++) {
-                    for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
-                        if (x >= 0 && x <= ForestEngine.WIDTH) {
-                            try {
-                                engine.pixels[(int)((((y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + (x * scale.X()) + x_scale)] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
-                                //engine.pixels[(y * ForestEngine.WIDTH) + x] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
-                            } catch (Exception e) {}
-                        }
+        for (int y = 0; y < dim.Y(); y++){
+            for (int x = 0; x < dim.X(); x++){
+                for (int yscale = 0; yscale < scale.Y(); yscale++){
+                    for (int xscale = 0; xscale < scale.X(); xscale++){
+                        try {
+                            pixels_scale[(int) ((y * scale.Y() * scale.Y() * dim.X()) + (x * scale.X()) + xscale + (yscale * dim.X() * scale.X()))] = pixels[(int) ((y * dim.X()) + x)];
+                        } catch (Exception e){}
                     }
                 }
             }
         }
+
+        for (int y = 0; y < dim.Y() * scale.Y(); y++){
+            for (int x = 0; x < dim.X() * scale.X(); x++){
+                try {
+                    if (x >= 0 && x <= ForestEngine.WIDTH)
+                        engine.pixels[(int) (((int)top.Y() * ForestEngine.WIDTH) + (int)top.X() + (y * ForestEngine.WIDTH) + x)] = pixels_scale[(int) ((y * dim.X() * scale.X()) + x)];
+                } catch (Exception e){}
+            }
+        }
+        //Temp
+
+        //Work On This Later
+//        for (int y = 0; y < dim.Y() * scale.Y(); y++){
+//            for (int x = 0; x < dim.X() * scale.X(); x++){
+//                try {
+//                    engine.pixels[(int)(((y + top.Y()) * ForestEngine.WIDTH) + x + top.X())] = pixels[(int)(((y / scale.Y()) * dim.Y()) + (x / scale.X()))];
+//                } catch (Exception e){}
+//            }
+//        }
+//        Vec2D start = top;
+//        Vec2D stop = top.add(dim);
+
+//        for (int y = (int)start.Y(); y < (int)stop.Y(); y++){
+//            for (int y_scale = 0; y_scale < scale.Y(); y_scale++){
+//                for (int x = (int)start.X(); x < (int)stop.X(); x++) {
+//                    for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
+//                        try {
+//                            //engine.pixels[(int)((((y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + (x * scale.X()) + x_scale)] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
+//                        } catch (Exception e) {}
+//                    }
+//                }
+//            }
+//        }
     }
 
     protected void rasterize(){

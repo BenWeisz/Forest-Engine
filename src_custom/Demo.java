@@ -18,7 +18,7 @@ public class Demo extends Environment {
         Bird bird = new Bird(this);
         Tree tree = new Tree(this);
         Camera camera = new Camera(this);
-        camera.set_offset(new Vec2D(-ForestEngine.WIDTH / 2, -ForestEngine.HEIGHT/2));
+        camera.set_offset(new Vec2D(-ForestEngine.WIDTH / 2 + 32, -ForestEngine.HEIGHT/2 + 32));
         camera.set_target(bird);
         camera.set_follow_decay(0.05f);
 

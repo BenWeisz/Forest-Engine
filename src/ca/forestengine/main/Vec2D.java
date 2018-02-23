@@ -68,6 +68,19 @@ public class Vec2D {
 
         return clone;
     }
+    public Vec2D component_scale(float scale1, float scale2){
+        /* Method: component_scale(float scale1, float scale2)
+        *  @Params: scale1: Scalar For The First Component.
+        *           scale2: Scalar For The First Component.
+        *  @Return: Vec2D: The Scaled Vec2D
+        *  @Design: Scale A Given Vector's Components.*/
+
+        Vec2D temp = this.clone();
+        temp.x *= scale1;
+        temp.y *= scale2;
+
+        return temp;
+    }
     public void translate(double x, double y){
         /* Method: translate(double x, double y)
         *  @Params: x: The X Translation Component.
