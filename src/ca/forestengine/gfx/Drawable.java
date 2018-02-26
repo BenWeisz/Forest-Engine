@@ -9,6 +9,7 @@ public abstract class Drawable {
     protected int layer = 0;
 
     protected FObject parent;
+    protected int draw_layer_group = Graphics.GRAPHICS_INLAY;
 
     public Drawable(Vec2D pos, FObject parent){
         /* Class Constructor: Drawable(Vec2D pos, FObject parent)
@@ -19,5 +20,13 @@ public abstract class Drawable {
 
         this.pos = pos;
         this.parent = parent;
+    }
+
+    public void set_draw_layer_group(int draw_layer_group){
+        /* Method: set_draw_layer_group(int draw_layer_group)
+        *  @Params: draw_layer_group: The New Layer Group For This Drawable.
+        *  @Return: None
+        *  @Design: Change The Layer Group Of This Drawable.*/
+        this.draw_layer_group = draw_layer_group;
     }
 }

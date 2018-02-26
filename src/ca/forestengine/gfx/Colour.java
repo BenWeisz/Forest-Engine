@@ -15,6 +15,7 @@ public class Colour {
     public static final int PINK = new Colour(0xFC92E5).get_colour_int();
     public static final int DARK_GREY = new Colour(0x202020).get_colour_int();
     public static final int LIGHT_GREY = new Colour(0xEFEFEA).get_colour_int();
+    public static final int BROWN = new Colour(0x74433A).get_colour_int();
 
     public Colour(int colour_int){
         /* Class Constructor: Colour(int colour_int)

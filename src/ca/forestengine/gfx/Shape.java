@@ -9,7 +9,7 @@ class Shape extends Drawable{
     protected String type;
 
     protected int colour;
-    protected ArrayList<Vec2D> verts;
+    protected ArrayList<Vec2D> vecs;
 
     public Shape(String type, ArrayList<Vec2D> verts, Vec2D pos, FObject parent) {
         /* Class Constructor: Shape(String type, ArrayList<Vec2D> verts, Vec2D pos, FObject parent)
@@ -22,7 +22,7 @@ class Shape extends Drawable{
         super(pos, parent);
 
         this.type = type;
-        this.verts = verts;
+        this.vecs = verts;
 
         Graphics.SHAPE_COUNT++;
     }

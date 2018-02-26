@@ -2,6 +2,7 @@ import ca.forestengine.gfx.Colour;
 import ca.forestengine.gfx.Graphics;
 import ca.forestengine.main.Environment;
 import ca.forestengine.main.FObject;
+import ca.forestengine.main.Vec2D;
 
 public class Tree extends FObject {
     Tree(Environment environment){
@@ -9,14 +10,21 @@ public class Tree extends FObject {
     }
 
     public void init() {
-
+//        add_sprite("bird", new Vec2D(0, 0), 0, null, Graphics.GRAPHICS_OVERLAY);
+//        get_sprite(0).set_scale(4, 4);
     }
     public void update(double dt) {
 
     }
     public void render() {
-        Graphics.DRAW_COLOUR = Colour.BLUE;
-        Graphics.rect(250, 250, 30, 30);
+        Graphics.set_draw_layer_group(Graphics.GRAPHICS_INLAY);
+        Graphics.SHAPE_MODE = Graphics.GRAPHICS_FILL;
+        Graphics.DRAW_COLOUR = Colour.BROWN;
+        Graphics.set_draw_layer(-(int)this.pos.Y());
+        Graphics.rect(this.pos.X() - 16, this.pos.Y(), 32, 128);
+        Graphics.DRAW_COLOUR = Colour.GREEN;
+        Graphics.set_draw_layer((int)this.pos.Y());
+        Graphics.circle(this.pos.X(),this.pos.Y(), 75);
     }
     public void dein() {
 

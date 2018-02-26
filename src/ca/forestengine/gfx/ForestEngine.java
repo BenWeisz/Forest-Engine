@@ -4,6 +4,7 @@ import ca.forestengine.input.Keyboard;
 import ca.forestengine.input.Mouse;
 import ca.forestengine.main.Environment;
 import ca.forestengine.main.FObject;
+import ca.forestengine.main.Time;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,7 @@ public class ForestEngine extends Canvas implements Runnable{
     public static int WINDOW_X, WINDOW_Y;
     public static Mouse MOUSE;
     public static Keyboard KEYBOARD;
+    public static Time TIME;
 
     private static byte ENGINE_MODE = 0;
     private static byte INPUT_MODE = 0;
@@ -163,6 +165,8 @@ public class ForestEngine extends Canvas implements Runnable{
         MOUSE = new Mouse();
         KEYBOARD = new Keyboard();
 
+        TIME = new Time();
+
         this.addMouseListener(MOUSE);
         this.addKeyListener(KEYBOARD);
     }
@@ -212,6 +216,8 @@ public class ForestEngine extends Canvas implements Runnable{
         *               (In Milliseconds).
         *  @Return: None
         *  @Design: Preform All Engine Related Updates.*/
+        TIME.update(dt);
+
         ForestEngine.ENVIRONMENT.update(dt);
 
         for(FObject o: ForestEngine.ENVIRONMENT.fobjects){
@@ -322,7 +328,7 @@ public class ForestEngine extends Canvas implements Runnable{
                     BigDecimal now_b = new BigDecimal(now);
                     BigDecimal last_b = new BigDecimal(last_time);
 
-                    update(now_b.subtract(last_b).divide(new BigDecimal(1000000000)).doubleValue());
+                    update(now_b.subtract(last_b).divide(new BigDecimal(1000000)).doubleValue());
                     render();
 
                     updates++;
@@ -353,7 +359,7 @@ public class ForestEngine extends Canvas implements Runnable{
                 BigDecimal now_b = new BigDecimal(now);
                 BigDecimal last_b = new BigDecimal(last_time);
 
-                update(now_b.subtract(last_b).divide(new BigDecimal(1000000000)).doubleValue());
+                update(now_b.subtract(last_b).divide(new BigDecimal(1000000)).doubleValue());
 
                 last_time = now;
 

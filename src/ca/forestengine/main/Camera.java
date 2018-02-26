@@ -10,6 +10,8 @@ public class Camera extends FObject{
     private Environment environment;
     private float follow_decay_rate = 0.999999f;
     private Vec2D offset = new Vec2D();
+    private Vec2D upper_bound = new Vec2D(Float.MIN_VALUE, Float.MIN_VALUE);
+    private Vec2D lower_bound = new Vec2D(Float.MAX_VALUE, Float.MAX_VALUE);
 
     public Camera(Environment environment){
         /* Class Constructor: Camera()
@@ -54,6 +56,15 @@ public class Camera extends FObject{
         *  @Design: Change The Offset Vector Of The Camera.*/
         this.offset = offset;
     }
+    public void set_bounds(Vec2D upper_bound, Vec2D lower_bound){
+        /* Method: set_bounds(Vec2D upper_bound, Vec2D lower_bound)
+        *  @Params: upper_bound: The Upper Left Bounding Corner.
+        *           lower_bound: THe Lower Right Bounding Corner.
+        *  @Return: None
+        *  @Design: Change The Bounding Of The Camera.*/
+        this.upper_bound = upper_bound;
+        this.lower_bound = lower_bound;
+    }
 
     public Vec2D get_offset(){
         /* Method: get_offset()
@@ -81,12 +92,13 @@ public class Camera extends FObject{
         *  @Params: dt: The Time Since The Last Update In Milliseconds.
         *  @Return: None
         *  @Design: Update The Camera.*/
-
         if (target != null){
             Vec2D dist = this.target.pos.subtract(this.pos);
             dist = dist.scale(this.follow_decay_rate);
 
             this.pos = this.pos.add(dist);
+
+            this.clamp_position();
         }
     }
     public void render() {
@@ -100,5 +112,21 @@ public class Camera extends FObject{
         *  @Params: None
         *  @Return: None
         *  @Design: De-instantiate The Camera Object.*/
+    }
+
+    private void clamp_position(){
+        /* Method: clamp_position()
+        *  @Params: None
+        *  @Return: None
+        *  @Design: Clamp The Position Of The Camera To The Bounds.*/
+
+        if (this.pos.X() < this.upper_bound.X())
+            this.pos.set(this.upper_bound.X() + 1, this.pos.Y());
+        if (this.pos.X() > this.lower_bound.X())
+            this.pos.set(this.lower_bound.X() - 1, this.pos.Y());
+        if (this.pos.Y() < this.upper_bound.Y())
+            this.pos.set(this.pos.X(), this.upper_bound.Y() + 1);
+        if (this.pos.Y() > this.lower_bound.Y())
+            this.pos.set(this.pos.X(), this.lower_bound.Y() - 1);
     }
 }

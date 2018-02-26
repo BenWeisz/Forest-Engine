@@ -21,6 +21,7 @@ public class Demo extends Environment {
         camera.set_offset(new Vec2D(-ForestEngine.WIDTH / 2 + 32, -ForestEngine.HEIGHT/2 + 32));
         camera.set_target(bird);
         camera.set_follow_decay(0.05f);
+        camera.set_bounds(new Vec2D(0, 0), new Vec2D(300, 300));
 
         this.set_camera(camera);
         ForestEngine.KEYBOARD.add_to_input("DOWN", new int[]{KeyEvent.VK_B, KeyEvent.VK_R});

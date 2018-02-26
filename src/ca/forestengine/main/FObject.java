@@ -30,13 +30,14 @@ public abstract class FObject {
         this.init();
     }
 
-    public void add_sprite(String resource_name, String tag){
+    public void add_sprite(String resource_name, String tag, int draw_layer_group){
         /* Method: add_sprite(String resource_name, String tag)
         *  @Params: resource_name: The Name Of The Resource For The New Sprite.
         *           tag: A Label For The New Sprite.
         *  @Return: None
         *  @Design: Add A New Sprite To This FObject.*/
         Sprite sprite = new Sprite(resource_name, pos.clone(), this);
+        sprite.set_draw_layer_group(draw_layer_group);
 
         if (tag != null)
             sprite.set_tag(tag);
@@ -46,7 +47,7 @@ public abstract class FObject {
 
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }
-    public void add_sprite(String resource_name, Vec2D pos, int layer, String tag){
+    public void add_sprite(String resource_name, Vec2D pos, int layer, String tag, int draw_layer_group){
         /* Method: add_sprite(String resource_name, Vec2D pos, int layer, String tag)
         *  @Params: resource_name: The Name Of The Resource For The New Sprite.
         *           pos: The Position Of The New Sprite Relative To This FObject.
@@ -56,6 +57,7 @@ public abstract class FObject {
         *  @Design: Add A New Sprite To This FObject.*/
         Sprite sprite = new Sprite(resource_name, pos, this);
         sprite.set_layer(layer);
+        sprite.set_draw_layer_group(draw_layer_group);
 
         if (tag != null)
             sprite.set_tag(tag);

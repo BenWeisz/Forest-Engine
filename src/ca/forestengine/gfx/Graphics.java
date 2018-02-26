@@ -11,17 +11,25 @@ public class Graphics {
     /*
     * Need:
     *
-    * Circle Renderer, Shape Stroke, Triangle Renderer, Font, Line Renderer Sprite Rotate
+    * Shape Stroke, Triangle Renderer, Font
     * */
+
+    public static final int GRAPHICS_OVERLAY = 0;
+    public static final int GRAPHICS_INLAY = 1;
+    public static final int GRAPHICS_FILL = 2;
+    public static final int GRAPHICS_OUTLINE = 3;
 
     public static boolean GRAPICS_FLAG_RENDER_CHANGE = true;
     public static boolean GRAPICS_FLAG_LAYER_CHANGE = false;
-    public static int DRAW_LAYER = 0;
     public static int DRAW_COLOUR = Colour.WHITE;
     public static int BACK_COLOUR = Colour.DARK_GREY;
+    public static int STROKE_WIDTH = 1;
+    public static int SHAPE_MODE = Graphics.GRAPHICS_FILL;
 
     private ForestEngine engine;
     private static ArrayList<Drawable> DRAWABLES = new ArrayList<Drawable>();
+    private static int DRAW_LAYER = 0;
+    private static int DRAW_LAYER_GROUP = Graphics.GRAPHICS_INLAY;
 
     protected static ArrayList<Image> IMAGES = new ArrayList<Image>();
     protected static int SHAPE_COUNT = 0;
@@ -33,6 +41,39 @@ public class Graphics {
         *  @Return: None
         *  @Design: Initialize A New Graphics System.*/
         this.engine = engine;
+    }
+
+    public static void set_draw_layer(int layer){
+        /* Method: set_draw_layer(int layer)
+        *  @Params: layer: The New Draw Layer For The Graphics Engine.
+        *  @Return: None
+        *  @Design: Change The Draw Layer Of The Graphics Engine.*/
+        if (Graphics.DRAW_LAYER_GROUP == Graphics.GRAPHICS_INLAY) {
+            if (layer >= Integer.MAX_VALUE - 1000) {
+                ForestEngine.WARN("WARNING!!! Last 1000 Draw Layers Reserved For Overlay Graphics.\n" +
+                        " Enter Overlay Graphics Mode To Draw To These Layers.");
+                Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1001;
+            }
+            else Graphics.DRAW_LAYER = layer;
+        }
+        else {
+            if (layer > 1000){
+                 ForestEngine.WARN("WARNING: Cannot Change To This Layer: " + (Integer.MAX_VALUE - 1000 + layer));
+                 Graphics.DRAW_LAYER = Integer.MAX_VALUE;
+            }
+            else Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1000 + layer;
+        }
+    }
+    public static void set_draw_layer_group(int draw_layer_group){
+        /* Method: set_draw_layer_group(int draw_layer_group)
+        *  @Params: draw_layer_group: The Layer Group To Draw The Following Draws In.
+        *  @Return: None
+        *  @Design: Change The Layer Group Of The Graphics Engine.*/
+        Graphics.DRAW_LAYER_GROUP = draw_layer_group;
+
+        if (draw_layer_group == Graphics.GRAPHICS_OVERLAY)
+            Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1000;
+        else Graphics.DRAW_LAYER = 0;
     }
 
     public void clear(){
@@ -131,13 +172,15 @@ public class Graphics {
         *  @Design: Draw A Rectangle At The Given Point With The Given
         *           Dimension.*/
 
-        ArrayList<Vec2D> verts = new ArrayList<Vec2D>();
-        verts.add(vec1);
-        verts.add(new Vec2D(vec1.X() + vec2.X(), vec1.Y() + vec2.Y()));
+        ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+        vecs.add(vec1);                                                     // Coordinate 1
+        vecs.add(new Vec2D(vec1.X() + vec2.X(), vec1.Y() + vec2.Y()));  // Coordinate 2
+        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, Graphics.SHAPE_MODE));    // Stroke Width, Shape Mode
 
-        Shape shape = new Shape("RECT", verts, verts.get(0), parent);
+        Shape shape = new Shape("RECT", vecs, vecs.get(0), parent);
         shape.colour = Graphics.DRAW_COLOUR;
         shape.layer = Graphics.DRAW_LAYER;
+        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
 
         DRAWABLES.add(shape);
 
@@ -151,48 +194,252 @@ public class Graphics {
         *           parent: The FObject Which Triggered This Line Draw.
         *  @Return: None
         *  @Design: Draw A Line From A Given Point To Another Point.*/
+        Graphics.line_internal(vec1, vec2, parent);
+    }
+    public static void line(Vec2D vec1, Vec2D vec2){
+        /* Method: line_internal(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Point At Which The Line Starts.
+        *           vec2: The Point At Which The Line Stops.
+        *  @Return: None
+        *  @Design: Draw A Line From A Given Point To Another Point.*/
+        Graphics.line_internal(vec1, vec2, null);
+    }
+    public static void line(float x1, float y1, float x2, float y2, FObject parent){
+        /* Method: line(float x1, float y1, float x2, float y2, FObject parent)
+        *  @Params: x1: X Component Of Starting Point.
+        *           y1: Y Component Of Starting Point.
+        *           x2: X Component Of Ending Point.
+        *           y2: Y Component Of Ending Point.
+        *           parent: The FObject Which Triggered This Line Draw.
+        *  @Return: None
+        *  @Design: Draw A Line From The First Point To The Second Point.*/
+        Graphics.line_internal(new Vec2D(x1, y1), new Vec2D(x2, y2), parent);
+    }
+    public static void line(float x1, float y1, float x2, float y2){
+        /* Method: line(float x1, float y1, float x2, float y2, FObject parent)
+        *  @Params: x1: X Component Of Starting Point.
+        *           y1: Y Component Of Starting Point.
+        *           x2: X Component Of Ending Point.
+        *           y2: Y Component Of Ending Point.
+        *  @Return: None
+        *  @Design: Draw A Line From The First Point To The Second Point.*/
+        Graphics.line_internal(new Vec2D(x1, y1), new Vec2D(x2, y2), null);
+    }
+    private static void line_internal(Vec2D vec1, Vec2D vec2, FObject parent){
+        /* Method: line_internal(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Point At Which The Line Starts.
+        *           vec2: The Point At Which The Line Stops.
+        *           parent: The FObject Which Triggered This Line Draw.
+        *  @Return: None
+        *  @Design: Draw A Line From A Given Point To Another Point.*/
 
-        ArrayList<Vec2D> verts = new ArrayList<Vec2D>();
-        verts.add(vec1);
-        verts.add(vec2);
+        ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+        vecs.add(vec1);                                                     // Coordinate 1
+        vecs.add(vec2);                                                     // Coordinate 2
+        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, 0));    // Stroke Width, Shape Mode
 
-        Shape shape = new Shape("LINE", verts, verts.get(0), parent);
+        Shape shape = new Shape("LINE", vecs, vecs.get(0), parent);
         shape.colour = Graphics.DRAW_COLOUR;
         shape.layer = Graphics.DRAW_LAYER;
+        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
 
         DRAWABLES.add(shape);
 
         Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
     }
 
+    public static void circle(Vec2D vec1, Vec2D vec2, FObject parent){
+        /* Method: circle(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Center Of The Circle.
+        *           vec2: The Radius Of The Circle (Stored In First Component).
+        *           parent: The FObject Which Triggered This Circle Draw.
+        *  @Return: None
+        *  @Design: Draw A Circle With The Given Radius.*/
+        Graphics.circle_internal(vec1, vec2, parent);
+    }
+    public static void circle(Vec2D vec1, Vec2D vec2){
+        /* Method: circle(Vec2D vec1, Vec2D vec2)
+        *  @Params: vec1: The Center Of The Circle.
+        *           vec2: The Radius Of The Circle (Stored In First Component).
+        *  @Return: None
+        *  @Design: Draw A Circle With The Given Radius.*/
+        Graphics.circle_internal(vec1, vec2, null);
+    }
+    public static void circle(float x, float y, float r, FObject parent){
+        /* Method: circle(float x, float y, float r, FObject parent)
+        *  @Params: x: The X Component Of The Center Of The Circle.
+        *           y: The Y Component Of The Center Of The Circle.
+        *           r: The Radius Of The Circle.
+        *           parent: The FObject Which Triggered This Circle Draw.
+        *  @Return: None
+        *  @Design: Draw A Circle With The Given Radius.*/
+        Graphics.circle_internal(new Vec2D(x, y), new Vec2D(r, 0), parent);
+    }
+    public static void circle(float x, float y, float r){
+        /* Method: circle(float x, float y, float r)
+        *  @Params: x: The X Component Of The Center Of The Circle.
+        *           y: The Y Component Of The Center Of The Circle.
+        *           r: The Radius Of The Circle.
+        *  @Return: None
+        *  @Design: Draw A Circle With The Given Radius.*/
+        Graphics.circle_internal(new Vec2D(x, y), new Vec2D(r, 0), null);
+    }
+    private static void circle_internal(Vec2D vec1, Vec2D vec2, FObject parent){
+        /* Method: circle_internal(Vec2D vec1, Vec2D vec2, FObject parent)
+        *  @Params: vec1: The Center Of The Circle.
+        *           vec2: The Radius Of The Circle (Stored In First Component).
+        *           parent: The FObject Which Triggered This Circle Draw.
+        *  @Return: None
+        *  @Design: Draw A Circle With The Given Radius.*/
+        ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+        vecs.add(vec1);                                                     // Center
+        vecs.add(vec2);                                                     // Radius
+        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, Graphics.SHAPE_MODE));    // Stroke Width, Shape Mode
+
+        Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), parent);
+        shape.colour = Graphics.DRAW_COLOUR;
+        shape.layer = Graphics.DRAW_LAYER;
+        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
+
+        DRAWABLES.add(shape);
+
+        Graphics.GRAPICS_FLAG_LAYER_CHANGE = true;
+    }
+
+    private void draw_circle(Shape circle){
+        /* Method: draw_circle(Shape circle)
+        *  @Params: circle: The Circle To Be Drawn.
+        *  @Return: None
+        *  @Design: Internal Rasterization Of A Circle.*/
+
+        Vec2D center = circle.vecs.get(0).clone();
+        Vec2D radius = circle.vecs.get(1).clone();
+
+        if (circle.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+            if (circle.parent != null)
+                center = center.add(circle.parent.pos);
+
+            center = center.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        }
+
+        if (circle.vecs.get(2).Y() == Graphics.GRAPHICS_FILL){
+            for (int y = -(int)radius.X(); y < radius.X(); y++){
+                for (int x = -(int)radius.X(); x < radius.X(); x++){
+                    if (Math.pow(y, 2) + Math.pow(x, 2) < Math.pow(radius.X(), 2)){
+                        if (x + (int)center.X() >= 0 && x + (int)center.X() <= ForestEngine.WIDTH) {
+                            try {
+                                engine.pixels[((y + (int)center.Y()) * ForestEngine.WIDTH) + (x + (int)center.X())] = circle.colour;
+                            } catch (Exception e){}
+                        }
+                    }
+                }
+            }
+        }
+        else if(circle.vecs.get(2).Y() == Graphics.GRAPHICS_OUTLINE){
+            if (circle.vecs.get(2).X() == 1){
+                for (int y = -(int)radius.X(); y < radius.X() + 1; y++){
+                    for (int x = -(int)radius.X(); x < radius.X() + 1; x++){
+                        if (Math.pow(y, 2) + Math.pow(x, 2) > Math.pow(radius.X(), 2) - circle.vecs.get(1).X() && Math.pow(y, 2) + Math.pow(x, 2) < Math.pow(radius.X(), 2) + circle.vecs.get(1).X()){
+                            if (x + (int)center.X() >= 0 && x + (int)center.X() <= ForestEngine.WIDTH) {
+                                try {
+                                    engine.pixels[((y + (int)center.Y()) * ForestEngine.WIDTH) + (x + (int)center.X())] = circle.colour;
+                                } catch (Exception e){}
+                            }
+                        }
+                    }
+                }
+            }
+            else if(circle.vecs.get(2).X() > 1){
+                for (int y = -(int)radius.X(); y < radius.X() + 1; y++){
+                    for (int x = -(int)radius.X(); x < radius.X() + 1; x++){
+                        if (Math.pow(y, 2) + Math.pow(x, 2) > Math.pow(radius.X(), 2) - circle.vecs.get(1).X() && Math.pow(y, 2) + Math.pow(x, 2) < Math.pow(radius.X(), 2) + circle.vecs.get(1).X()){
+                            ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+                            vecs.add(new Vec2D(x + (int)center.X(), y + (int)center.Y()));
+                            vecs.add(new Vec2D(circle.vecs.get(2).X(), 0));
+                            vecs.add(new Vec2D(0, Graphics.GRAPHICS_FILL));
+
+                            Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), null);
+                            shape.colour = circle.colour;
+                            shape.layer = circle.layer;
+                            shape.draw_layer_group = circle.draw_layer_group;
+
+                            if (circle.draw_layer_group == GRAPHICS_INLAY)
+                                shape.vecs.set(0, shape.vecs.get(0).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+
+                            draw_circle(shape);
+                        }
+                    }
+                }
+            }
+            else ForestEngine.ERR("ERROR!!! Cannot Have Negative Stroke Width.");
+        }
+        else ForestEngine.ERR("ERROR!!! Invalid Shape Mode.");
+    }
     private void draw_rect(Shape rect){
         /* Method: draw_rect(Shape rect)
         *  @Params: rect: The Rectangle To Be Rasterized.
         *  @Return: None
         *  @Design: Internal Rasterization Of The
         *           Given Shape As A Rectangle*/
-        Vec2D top = rect.verts.get(0).clone();
-        Vec2D bot = rect.verts.get(1).clone();
+        Vec2D top = rect.vecs.get(0).clone();
+        Vec2D bot = rect.vecs.get(1).clone();
 
-        if(rect.parent != null) {
-            top = top.add(rect.parent.pos);
-            bot = bot.add(rect.parent.pos);
+        if (rect.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+            if (rect.parent != null) {
+                top = top.add(rect.parent.pos);
+                bot = bot.add(rect.parent.pos);
+            }
+
+            top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+            bot = bot.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
         }
 
-        top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
-        bot = bot.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        if (rect.vecs.get(2).Y() == Graphics.GRAPHICS_FILL){
+            for(int y = (int)top.Y(); y < (int)bot.Y(); y++){
+                for(int x = (int)top.X(); x < (int)bot.X(); x++) {
+                    int pos = (y * ForestEngine.WIDTH) + x;
 
-        for(int y = (int)top.Y(); y < (int)bot.Y(); y++){
-            for(int x = (int)top.X(); x < (int)bot.X(); x++) {
-                int pos = (y * ForestEngine.WIDTH) + x;
-
-                if (x >= 0 && x <= ForestEngine.WIDTH) {
-                    try {
-                        engine.pixels[pos] = rect.colour;
-                    } catch (ArrayIndexOutOfBoundsException e) {}
+                    if (x >= 0 && x <= ForestEngine.WIDTH) {
+                        try {
+                            engine.pixels[pos] = rect.colour;
+                        } catch (ArrayIndexOutOfBoundsException e) {}
+                    }
                 }
             }
         }
+        else if (rect.vecs.get(2).Y() == Graphics.GRAPHICS_OUTLINE){
+            ArrayList<ArrayList<Vec2D>> vecs_arr = new ArrayList<ArrayList<Vec2D>>();
+
+            for (int i = 0; i < 4; i++)
+                vecs_arr.add(new ArrayList<Vec2D>());
+
+            vecs_arr.get(0).add(new Vec2D(top.X(), top.Y())); // Top Start
+            vecs_arr.get(1).add(new Vec2D(top.X(), bot.Y())); // Bottom Start
+            vecs_arr.get(2).add(new Vec2D(top.X(), top.Y())); // Left Start
+            vecs_arr.get(3).add(new Vec2D(bot.X(), top.Y())); // Right Start
+            vecs_arr.get(0).add(new Vec2D(bot.X(), top.Y())); // Top End
+            vecs_arr.get(1).add(new Vec2D(bot.X(), bot.Y())); // Bottom End
+            vecs_arr.get(2).add(new Vec2D(top.X(), bot.Y())); // Left End
+            vecs_arr.get(3).add(new Vec2D(bot.X(), bot.Y())); // Right End
+
+            for (int i = 0; i < 4; i++)
+                vecs_arr.get(i).add(new Vec2D(rect.vecs.get(2).X(),0));
+
+            for (int i = 0; i < 4; i++){
+                Shape shape = new Shape("LINE", vecs_arr.get(i), vecs_arr.get(i).get(0), null);
+                shape.colour = rect.colour;
+                shape.layer = rect.layer;
+                shape.draw_layer_group = rect.draw_layer_group;
+
+                if (rect.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+                    shape.vecs.set(0, shape.vecs.get(0).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+                    shape.vecs.set(1, shape.vecs.get(1).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+                }
+
+                draw_line(shape);
+            }
+        }
+        else ForestEngine.ERR("ERROR!!! Invalid Shape Mode.");
     }
     private void draw_line(Shape line){
         /* Method: draw_line(Shape line)
@@ -201,19 +448,23 @@ public class Graphics {
         *  @Design: Internal Rasterization Of The Given
         *           Shape As A Line, Using Bresenham's
         *           Algorithm In Two Directions.*/
-        Vec2D p1 = line.verts.get(0).clone();
-        Vec2D p2 = line.verts.get(1).clone();
+        Vec2D p1 = line.vecs.get(0).clone();
+        Vec2D p2 = line.vecs.get(1).clone();
+        Vec2D stroke = line.vecs.get(2).clone();
 
         if(p1.X() > p2.X())
             p1.swap(p2);
 
-        if(line.parent != null) {
-            p1 = p1.add(line.parent.pos);
-            p2 = p2.add(line.parent.pos);
-        }
 
-        p1 = p1.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
-        p2 = p2.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        if (line.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+            if (line.parent != null) {
+                p1 = p1.add(line.parent.pos);
+                p2 = p2.add(line.parent.pos);
+            }
+
+            p1 = p1.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+            p2 = p2.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        }
 
         float delta_x = p2.X() - p1.X();
         float delta_y = p2.Y() - p1.Y();
@@ -226,11 +477,30 @@ public class Graphics {
                 int y = (int) p1.Y();
                 for (int x = (int) p1.X(); x < p2.X(); x++) {
 
-                    try {
-                        if (x >= 0 && x <= ForestEngine.WIDTH)
-                            engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    if (stroke.X() == 1){
+                        try {
+                            if (x >= 0 && x <= ForestEngine.WIDTH)
+                                engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                        }
                     }
+                    else if (stroke.X() > 1){
+                        ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+                        vecs.add(new Vec2D(x, y));
+                        vecs.add(stroke);
+                        vecs.add(new Vec2D(stroke.X(), Graphics.GRAPHICS_FILL));
+
+                        Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), null);
+                        shape.colour = line.colour;
+                        shape.layer = line.layer;
+                        shape.draw_layer_group = line.draw_layer_group;
+
+                        if (line.draw_layer_group == GRAPHICS_INLAY)
+                            shape.vecs.set(0, shape.vecs.get(0).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+
+                        draw_circle(shape);
+                    }
+                    else ForestEngine.ERR("ERROR!!! Cannot Have Negative Stroke Width.");
 
                     error += delta_error;
                     while (error >= 0.5f) {
@@ -252,11 +522,30 @@ public class Graphics {
                 int x = (int) p1.X();
                 for (int y = (int) p1.Y(); y < p2.Y(); y++) {
 
-                    try {
-                        if (x >= 0 && x <= ForestEngine.WIDTH)
-                            engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    if (stroke.X() == 1) {
+                        try {
+                            if (x >= 0 && x <= ForestEngine.WIDTH)
+                                engine.pixels[(y * ForestEngine.WIDTH) + x] = line.colour;
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                        }
                     }
+                    else if (stroke.X() > 1){
+                        ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+                        vecs.add(new Vec2D(x, y));
+                        vecs.add(stroke);
+                        vecs.add(new Vec2D(stroke.X(), Graphics.GRAPHICS_FILL));
+
+                        Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), null);
+                        shape.colour = line.colour;
+                        shape.layer = line.layer;
+                        shape.draw_layer_group = line.draw_layer_group;
+
+                        if (line.draw_layer_group == GRAPHICS_INLAY)
+                            shape.vecs.set(0, shape.vecs.get(0).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+
+                        draw_circle(shape);
+                    }
+                    else ForestEngine.ERR("ERROR!!! Cannot Have Negative Stroke Width.");
 
                     error += delta_error;
                     while (error >= 0.5f) {
@@ -271,10 +560,29 @@ public class Graphics {
                 p1.swap(p2);
 
             for(int y = (int)p1.Y(); y < p2.Y(); y++){
-                try {
-                    if (p1.X() >= 0 && p1.X() <= ForestEngine.WIDTH)
-                    engine.pixels[(y * ForestEngine.WIDTH) + (int)p1.X()] = line.colour;
-                } catch (ArrayIndexOutOfBoundsException e) {}
+                if (stroke.X() == 1) {
+                    try {
+                        if (p1.X() >= 0 && p1.X() <= ForestEngine.WIDTH)
+                            engine.pixels[(y * ForestEngine.WIDTH) + (int) p1.X()] = line.colour;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                    }
+                }
+                else {
+                    ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
+                    vecs.add(new Vec2D(p1.X(), y));
+                    vecs.add(stroke);
+                    vecs.add(new Vec2D(stroke.X(), Graphics.GRAPHICS_FILL));
+
+                    Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), null);
+                    shape.colour = line.colour;
+                    shape.layer = line.layer;
+                    shape.draw_layer_group = line.draw_layer_group;
+
+                    if (line.draw_layer_group == GRAPHICS_INLAY)
+                        shape.vecs.set(0, shape.vecs.get(0).add(ForestEngine.ENVIRONMENT.camera.get_offset_position()));
+
+                    draw_circle(shape);
+                }
             }
         }
     }
@@ -294,57 +602,25 @@ public class Graphics {
         Vec2D scale = sprite.get_scale();
         int[] pixels = Graphics.IMAGES.get(image_pos).get_pixels();
 
-        top = top.add(sprite.parent.pos);
-        top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
-
-        //Temp
-        //Scaling
-        int[] pixels_scale = new int[(int)(pixels.length * scale.X() * scale.Y())];
+        if (sprite.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+            top = top.add(sprite.parent.pos);
+            top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        }
 
         for (int y = 0; y < dim.Y(); y++){
             for (int x = 0; x < dim.X(); x++){
-                for (int yscale = 0; yscale < scale.Y(); yscale++){
-                    for (int xscale = 0; xscale < scale.X(); xscale++){
-                        try {
-                            pixels_scale[(int) ((y * scale.Y() * scale.Y() * dim.X()) + (x * scale.X()) + xscale + (yscale * dim.X() * scale.X()))] = pixels[(int) ((y * dim.X()) + x)];
-                        } catch (Exception e){}
+                for (int y_scale = 0; y_scale < scale.Y(); y_scale++){
+                    for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
+                        if ((int)top.X() + (x * (int)scale.X()) + x_scale >= 0 && (int)top.X() + (x * (int)scale.X()) + x_scale < ForestEngine.WIDTH) {
+                            try {
+                                engine.pixels[(int) (((int) top.Y() * ForestEngine.WIDTH) + (int)top.X() + (y * (int)scale.Y() * ForestEngine.WIDTH) + (x * (int)scale.X()) + (y_scale * ForestEngine.WIDTH) + x_scale)] = pixels[(int) ((y * (int)dim.X()) + x)];
+                            } catch (Exception e) {
+                            }
+                        }
                     }
                 }
             }
         }
-
-        for (int y = 0; y < dim.Y() * scale.Y(); y++){
-            for (int x = 0; x < dim.X() * scale.X(); x++){
-                try {
-                    if (x >= 0 && x <= ForestEngine.WIDTH)
-                        engine.pixels[(int) (((int)top.Y() * ForestEngine.WIDTH) + (int)top.X() + (y * ForestEngine.WIDTH) + x)] = pixels_scale[(int) ((y * dim.X() * scale.X()) + x)];
-                } catch (Exception e){}
-            }
-        }
-        //Temp
-
-        //Work On This Later
-//        for (int y = 0; y < dim.Y() * scale.Y(); y++){
-//            for (int x = 0; x < dim.X() * scale.X(); x++){
-//                try {
-//                    engine.pixels[(int)(((y + top.Y()) * ForestEngine.WIDTH) + x + top.X())] = pixels[(int)(((y / scale.Y()) * dim.Y()) + (x / scale.X()))];
-//                } catch (Exception e){}
-//            }
-//        }
-//        Vec2D start = top;
-//        Vec2D stop = top.add(dim);
-
-//        for (int y = (int)start.Y(); y < (int)stop.Y(); y++){
-//            for (int y_scale = 0; y_scale < scale.Y(); y_scale++){
-//                for (int x = (int)start.X(); x < (int)stop.X(); x++) {
-//                    for (int x_scale = 0; x_scale < scale.X(); x_scale++) {
-//                        try {
-//                            //engine.pixels[(int)((((y * scale.Y()) + y_scale) * ForestEngine.WIDTH) + (x * scale.X()) + x_scale)] = pixels[((y - (int) start.Y()) * (int) dim.X()) + (x - (int) start.X())];
-//                        } catch (Exception e) {}
-//                    }
-//                }
-//            }
-//        }
     }
 
     protected void rasterize(){
@@ -374,6 +650,9 @@ public class Graphics {
                             break;
                         case "LINE":
                             draw_line((Shape)drawable);
+                            break;
+                        case "CIRCLE":
+                            draw_circle((Shape)drawable);
                             break;
                     }
                 }
