@@ -1,24 +1,13 @@
  Things To Add:
 ================
 - Sound
-- Text Rendering
-- Add Timers
-- Make A Rect And Line Drawer So That It Can Be Only On The Canvas And Not Relative.
 - Resource Animation Sets
 - Remove Unneccesary Imports --- DONE!!! - RECHECK
 - Check for no gui effieciencies
-- Sort Out Camera So It Is Updated Last
-- Finish Revamp On Line Calls
-- Add Circle And Triangle Rendering
-- Add Shape Border Rendering
-- Add Line Thickness Rendering
 - Fix The Fact That Rendering Window Only Extends to 450 instead of 480
-
 -revamp load_image in resourceloader to accomodate for more types
 
--Add ability to draw shapes from none Fobjects (hidden Fobject: The Camera)
-
-- Fix New Camera Feature.
+- Problem With Fonts Is Fonts Are Being Drawn Over
 
 =-=-=-=-=-=-=-=
  DOCUMENTATION
@@ -44,8 +33,3 @@
 
 - Private variables allways bellow Publics
 - For Members Variables always use this.
-
-Camera
-===========
- THE STACK
-===========

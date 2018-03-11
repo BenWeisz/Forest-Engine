@@ -254,9 +254,12 @@ public class ForestEngine extends Canvas implements Runnable{
             o.render();
         }
 
-        GRAPHICS.rasterize();
+        GRAPHICS.rasterize(g);
 
-        g.drawImage(image, 0, 0, ForestEngine.WIDTH, ForestEngine.HEIGHT, null);
+        if (Graphics.GRAPICS_FLAG_RENDER_CHANGE)
+            g.drawImage(image, 0, 0, ForestEngine.WIDTH, ForestEngine.HEIGHT, null);
+
+        Graphics.GRAPICS_FLAG_RENDER_CHANGE = false;
 
         g.dispose();
         bs.show();

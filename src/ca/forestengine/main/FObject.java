@@ -147,11 +147,19 @@ public abstract class FObject {
         *  @Return: None
         *  @Design: Change All Of This FObject's Sprites'
         *           Layers To The Given Layer Number.*/
+        boolean layer_change = false;
+
         for (Sprite sprite: sprites) {
-            sprite.set_layer(layer);
+            int cur_layer = sprite.get_layer();
+
+            if (cur_layer != layer) {
+                sprite.set_layer(layer);
+                layer_change = true;
+            }
         }
 
-        Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
+        if (layer_change)
+            Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
     public void set_active(boolean active){
         /* Method: set_active(boolean active)

@@ -5,6 +5,7 @@ import ca.forestengine.gfx.Graphics;
 public class Vec2D {
     public final static boolean GRAPICS_MODE = true;
     public final static boolean NO_GRAPHICS_MODE = false;
+    public static final float RENDER_THRESHOLD = 0.1f;
 
     private float x = 0.0f, y = 0.0f;
     private boolean graphics_mode = true;

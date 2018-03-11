@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 public class Demo extends Environment {
 
     public void init() {
-        Graphics.BACK_COLOUR = Colour. DARK_GREY;
+        Graphics.GRAPHICS_BACK_COLOUR = Colour. DARK_GREY;
         ResourceLoader.load_resource("spritesheet.png");
         ResourceLoader.cut_image(new Vec2D(0, 0), new Vec2D(16, 16), "bird");
 

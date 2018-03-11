@@ -8,6 +8,8 @@ import ca.forestengine.main.FObject;
 import ca.forestengine.main.Vec2D;
 import sun.security.jgss.GSSHeader;
 
+import java.awt.*;
+
 public class Bird extends FObject {
     public Bird(Environment environment) {
         super(environment);
@@ -49,17 +51,26 @@ public class Bird extends FObject {
     }
 
     public void render() {
-        Graphics.set_draw_layer_group(Graphics.GRAPHICS_OVERLAY);
-        Graphics.SHAPE_MODE = Graphics.GRAPHICS_FILL;
-        Graphics.DRAW_COLOUR = Colour.BLUE;
-        Graphics.rect(0, 360, 640, 100);
-        Graphics.SHAPE_MODE = Graphics.GRAPHICS_OUTLINE;
-        Graphics.DRAW_COLOUR = Colour.ORANGE;
-        Graphics.rect(8, 368, 620, 75);
-        Graphics.DRAW_COLOUR = Colour.RED;
-        Graphics.STROKE_WIDTH = 2;
-        Graphics.SHAPE_MODE = Graphics.GRAPHICS_FILL;
-        Graphics.circle(50, 400, 20);
+//        Graphics.set_draw_layer_group(Graphics.GRAPHICS_OVERLAY);
+//        Graphics.SHAPE_MODE = Graphics.GRAPHICS_FILL;
+//        Graphics.DRAW_COLOUR = Colour.BLUE;
+//        Graphics.rect(0, 360, 640, 100);
+//        Graphics.SHAPE_MODE = Graphics.GRAPHICS_OUTLINE;
+//        Graphics.DRAW_COLOUR = Colour.ORANGE;
+//        Graphics.rect(8, 368, 620, 75);
+//        Graphics.DRAW_COLOUR = Colour.RED;
+//        Graphics.STROKE_WIDTH = 2;
+//        Graphics.SHAPE_MODE = Graphics.GRAPHICS_FILL;
+//        Graphics.circle(50, 400, 20);
+//        Graphics.DRAW_COLOUR = Colour.BLUE;
+//        Graphics.SHAPE_MODE = Graphics.GRAPHICS_OUTLINE;
+//        Graphics.set_draw_layer_group(Graphics.GRAPHICS_OVERLAY);
+//        Graphics.rect(0, 400, 40, 40);
+
+        Graphics.GRAPHICS_DRAW_COLOUR = Colour.WHITE;
+        Graphics.set_draw_layer_group(Graphics.GRAPHICS_INLAY);
+        Graphics.GRAPHICS_FONT = new Font("DisposableDroid BB", Font.PLAIN, 24);
+        Graphics.text(100, 100, "Bobs ur uncle!");
     }
 
     public void dein() {

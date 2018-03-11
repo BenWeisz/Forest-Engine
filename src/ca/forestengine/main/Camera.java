@@ -1,17 +1,18 @@
 package ca.forestengine.main;
 
+import ca.forestengine.gfx.Colour;
 import ca.forestengine.gfx.ForestEngine;
+import ca.forestengine.gfx.Graphics;
 
 public class Camera extends FObject{
-    public static int WIDTH = ForestEngine.WIDTH;
-    public static int HEIGHT = ForestEngine.HEIGHT;
 
     private FObject target = null;
-    private Environment environment;
     private float follow_decay_rate = 0.999999f;
+    private float epsilon = 0.1f;
     private Vec2D offset = new Vec2D();
     private Vec2D upper_bound = new Vec2D(Float.MIN_VALUE, Float.MIN_VALUE);
     private Vec2D lower_bound = new Vec2D(Float.MAX_VALUE, Float.MAX_VALUE);
+    private Vec2D previous_pos = new Vec2D();
 
     public Camera(Environment environment){
         /* Class Constructor: Camera()
@@ -94,11 +95,20 @@ public class Camera extends FObject{
         *  @Design: Update The Camera.*/
         if (target != null){
             Vec2D dist = this.target.pos.subtract(this.pos);
+
             dist = dist.scale(this.follow_decay_rate);
 
+            this.previous_pos = this.pos.clone();
             this.pos = this.pos.add(dist);
+            this.pos.set_graphics_mode(false);
 
             this.clamp_position();
+
+            float delta_x = Math.abs(this.pos.X() - this.previous_pos.X());
+            float delta_y = Math.abs(this.pos.Y() - this.previous_pos.Y());
+
+            if (delta_x > this.epsilon || delta_y > this.epsilon)
+                Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
         }
     }
     public void render() {

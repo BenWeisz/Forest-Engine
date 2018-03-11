@@ -3,6 +3,7 @@ package ca.forestengine.gfx;
 import ca.forestengine.main.FObject;
 import ca.forestengine.main.Vec2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,15 +22,16 @@ public class Graphics {
 
     public static boolean GRAPICS_FLAG_RENDER_CHANGE = true;
     public static boolean GRAPICS_FLAG_LAYER_CHANGE = false;
-    public static int DRAW_COLOUR = Colour.WHITE;
-    public static int BACK_COLOUR = Colour.DARK_GREY;
-    public static int STROKE_WIDTH = 1;
-    public static int SHAPE_MODE = Graphics.GRAPHICS_FILL;
+    public static int GRAPHICS_DRAW_COLOUR = Colour.WHITE;
+    public static int GRAPHICS_BACK_COLOUR = Colour.DARK_GREY;
+    public static int GRAPHICS_STROKE_WIDTH = 1;
+    public static int GRAPHICS_SHAPE_MODE = Graphics.GRAPHICS_FILL;
+    public static Font GRAPHICS_FONT = new Font("Arial", Font.PLAIN, 12);
 
     private ForestEngine engine;
     private static ArrayList<Drawable> DRAWABLES = new ArrayList<Drawable>();
-    private static int DRAW_LAYER = 0;
-    private static int DRAW_LAYER_GROUP = Graphics.GRAPHICS_INLAY;
+    private static int GRAPHICS_DRAW_LAYER = 0;
+    private static int GRAPHICS_DRAW_LAYER_GROUP = Graphics.GRAPHICS_INLAY;
 
     protected static ArrayList<Image> IMAGES = new ArrayList<Image>();
     protected static int SHAPE_COUNT = 0;
@@ -48,20 +50,20 @@ public class Graphics {
         *  @Params: layer: The New Draw Layer For The Graphics Engine.
         *  @Return: None
         *  @Design: Change The Draw Layer Of The Graphics Engine.*/
-        if (Graphics.DRAW_LAYER_GROUP == Graphics.GRAPHICS_INLAY) {
+        if (Graphics.GRAPHICS_DRAW_LAYER_GROUP == Graphics.GRAPHICS_INLAY) {
             if (layer >= Integer.MAX_VALUE - 1000) {
                 ForestEngine.WARN("WARNING!!! Last 1000 Draw Layers Reserved For Overlay Graphics.\n" +
                         " Enter Overlay Graphics Mode To Draw To These Layers.");
-                Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1001;
+                Graphics.GRAPHICS_DRAW_LAYER = Integer.MAX_VALUE - 1001;
             }
-            else Graphics.DRAW_LAYER = layer;
+            else Graphics.GRAPHICS_DRAW_LAYER = layer;
         }
         else {
             if (layer > 1000){
                  ForestEngine.WARN("WARNING: Cannot Change To This Layer: " + (Integer.MAX_VALUE - 1000 + layer));
-                 Graphics.DRAW_LAYER = Integer.MAX_VALUE;
+                 Graphics.GRAPHICS_DRAW_LAYER = Integer.MAX_VALUE;
             }
-            else Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1000 + layer;
+            else Graphics.GRAPHICS_DRAW_LAYER = Integer.MAX_VALUE - 1000 + layer;
         }
     }
     public static void set_draw_layer_group(int draw_layer_group){
@@ -69,11 +71,11 @@ public class Graphics {
         *  @Params: draw_layer_group: The Layer Group To Draw The Following Draws In.
         *  @Return: None
         *  @Design: Change The Layer Group Of The Graphics Engine.*/
-        Graphics.DRAW_LAYER_GROUP = draw_layer_group;
+        Graphics.GRAPHICS_DRAW_LAYER_GROUP = draw_layer_group;
 
         if (draw_layer_group == Graphics.GRAPHICS_OVERLAY)
-            Graphics.DRAW_LAYER = Integer.MAX_VALUE - 1000;
-        else Graphics.DRAW_LAYER = 0;
+            Graphics.GRAPHICS_DRAW_LAYER = Integer.MAX_VALUE - 1000;
+        else Graphics.GRAPHICS_DRAW_LAYER = 0;
     }
 
     public void clear(){
@@ -83,7 +85,7 @@ public class Graphics {
         *  @Design: Clear The Engine's Raster.*/
         for (int y = 0; y < ForestEngine.HEIGHT; y++){
             for(int x = 0; x < ForestEngine.WIDTH; x++){
-                    engine.pixels[(y * ForestEngine.WIDTH) + x] = Graphics.BACK_COLOUR;
+                    engine.pixels[(y * ForestEngine.WIDTH) + x] = Graphics.GRAPHICS_BACK_COLOUR;
             }
         }
     }
@@ -105,6 +107,60 @@ public class Graphics {
         *  @Return: None
         *  @Design: Add A Graphics Element To The Drawables List.*/
         DRAWABLES.add(drawable);
+    }
+
+    public static void text(Vec2D vec1, String text, FObject parent){
+        /* Method: text(Vec2D vec1, String text, int size, FObject parent)
+        *  @Params: vec1: The Position At Which To Draw The Given Text.
+        *           text: The Text To Be Drawn.
+        *           parent: The FObject Which Triggered This Text Draw.
+        *  @Return: None
+        *  @Design: Draw Text At A Given Point.*/
+        Graphics.text_internal(vec1, text, parent);
+    }
+    public static void text(Vec2D vec1, String text){
+        /* Method: text(Vec2D vec1, String text, int size)
+        *  @Params: vec1: The Position At Which To Draw The Given Text.
+        *           text: The Text To Be Drawn.
+        *  @Return: None
+        *  @Design: Draw Text At A Given Point.*/
+        Graphics.text_internal(vec1, text, null);
+    }
+    public static void text(float x, float y, String text, FObject parent){
+        /* Method: text(float x, float y, String text, int size, FObject parent)
+        *  @Params: x: The X Component Of The Point At Which To Draw The Text.
+        *           y: The Y Component Of The Point At Which To Draw The Text.
+        *           text: The Text To Be Drawn.
+        *           parent: The FObject Which Triggered This Text Draw.
+        *  @Return: None
+        *  @Design: Draw Text At A Given Point.*/
+        Graphics.text_internal(new Vec2D(x, y), text, parent);
+    }
+    public static void text(float x, float y, String text){
+        /* Method: text(float x, float y, String text, int size)
+        *  @Params: x: The X Component Of THe Point At Which To Draw The Text.
+        *           y: The Y Component Of THe Point At Which To Draw The Text.
+        *           text: The Text To Be Drawn.
+        *  @Return: None
+        *  @Design: Draw Text At A Given Point.*/
+        Graphics.text_internal(new Vec2D(x, y), text, null);
+    }
+    private static void text_internal(Vec2D vec1, String text_string, FObject parent){
+        /* Method: text_internal(Vec2D vec1, String text_string, int size, FObject parent)
+        *  @Params: vec1: The Position At Which To Draw This Text.
+        *           text_string: The Text To Be Drawn.
+        *           parent: The FObject Which Triggered This Draw Call.
+        *  @Return: None
+        *  @Design: Draw The Given Text, With The Given Properties.*/
+
+        Text text = new Text(vec1, text_string, Graphics.GRAPHICS_FONT,
+                Graphics.GRAPHICS_DRAW_COLOUR, parent);
+        text.layer = Graphics.GRAPHICS_DRAW_LAYER;
+        text.draw_layer_group = Graphics.GRAPHICS_DRAW_LAYER_GROUP;
+
+        Graphics.add_drawable(text);
+
+        Graphics.GRAPICS_FLAG_RENDER_CHANGE = true;
     }
 
     public static void rect(Vec2D vec1, Vec2D vec2, FObject parent){
@@ -175,12 +231,12 @@ public class Graphics {
         ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
         vecs.add(vec1);                                                     // Coordinate 1
         vecs.add(new Vec2D(vec1.X() + vec2.X(), vec1.Y() + vec2.Y()));  // Coordinate 2
-        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, Graphics.SHAPE_MODE));    // Stroke Width, Shape Mode
+        vecs.add(new Vec2D(Graphics.GRAPHICS_STROKE_WIDTH, Graphics.GRAPHICS_SHAPE_MODE));    // Stroke Width, Shape Mode
 
         Shape shape = new Shape("RECT", vecs, vecs.get(0), parent);
-        shape.colour = Graphics.DRAW_COLOUR;
-        shape.layer = Graphics.DRAW_LAYER;
-        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
+        shape.colour = Graphics.GRAPHICS_DRAW_COLOUR;
+        shape.layer = Graphics.GRAPHICS_DRAW_LAYER;
+        shape.draw_layer_group = Graphics.GRAPHICS_DRAW_LAYER_GROUP;
 
         DRAWABLES.add(shape);
 
@@ -236,12 +292,12 @@ public class Graphics {
         ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
         vecs.add(vec1);                                                     // Coordinate 1
         vecs.add(vec2);                                                     // Coordinate 2
-        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, 0));    // Stroke Width, Shape Mode
+        vecs.add(new Vec2D(Graphics.GRAPHICS_STROKE_WIDTH, 0));    // Stroke Width, Shape Mode
 
         Shape shape = new Shape("LINE", vecs, vecs.get(0), parent);
-        shape.colour = Graphics.DRAW_COLOUR;
-        shape.layer = Graphics.DRAW_LAYER;
-        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
+        shape.colour = Graphics.GRAPHICS_DRAW_COLOUR;
+        shape.layer = Graphics.GRAPHICS_DRAW_LAYER;
+        shape.draw_layer_group = Graphics.GRAPHICS_DRAW_LAYER_GROUP;
 
         DRAWABLES.add(shape);
 
@@ -294,12 +350,12 @@ public class Graphics {
         ArrayList<Vec2D> vecs = new ArrayList<Vec2D>();
         vecs.add(vec1);                                                     // Center
         vecs.add(vec2);                                                     // Radius
-        vecs.add(new Vec2D(Graphics.STROKE_WIDTH, Graphics.SHAPE_MODE));    // Stroke Width, Shape Mode
+        vecs.add(new Vec2D(Graphics.GRAPHICS_STROKE_WIDTH, Graphics.GRAPHICS_SHAPE_MODE));    // Stroke Width, Shape Mode
 
         Shape shape = new Shape("CIRCLE", vecs, vecs.get(0), parent);
-        shape.colour = Graphics.DRAW_COLOUR;
-        shape.layer = Graphics.DRAW_LAYER;
-        shape.draw_layer_group = Graphics.DRAW_LAYER_GROUP;
+        shape.colour = Graphics.GRAPHICS_DRAW_COLOUR;
+        shape.layer = Graphics.GRAPHICS_DRAW_LAYER;
+        shape.draw_layer_group = Graphics.GRAPHICS_DRAW_LAYER_GROUP;
 
         DRAWABLES.add(shape);
 
@@ -597,7 +653,7 @@ public class Graphics {
 
         // Break into sub-routines with different draw properties
 
-        Vec2D top = sprite.pos;
+        Vec2D top = sprite.pos.clone();
         Vec2D dim = Graphics.IMAGES.get(image_pos).get_size();
         Vec2D scale = sprite.get_scale();
         int[] pixels = Graphics.IMAGES.get(image_pos).get_pixels();
@@ -622,8 +678,28 @@ public class Graphics {
             }
         }
     }
+    private void draw_text(Text text, java.awt.Graphics g){
+        /* Method: draw_text(Text text)
+        *  @Params: text: The Text To Be Rasterized.
+        *           g: The Default Java Rasterizer.
+        *  @Return: None
+        *  @Design: Draw The Given Text.*/
 
-    protected void rasterize(){
+        Vec2D top = text.pos.clone();
+
+        if (text.draw_layer_group == Graphics.GRAPHICS_INLAY) {
+            if (text.parent != null)
+                top = top.add(text.parent.pos);
+
+            top = top.subtract(ForestEngine.ENVIRONMENT.camera.get_offset_position());
+        }
+
+        g.setFont(new Font("Arial", Font.PLAIN, 12));//text.font);
+        g.setColor(new Color(text.colour));
+        g.drawString(text.text, (int)text.pos.X(), (int)text.pos.Y());
+    }
+
+    protected void rasterize(java.awt.Graphics g){
         /* Method: rasterize()
         *  @Params: None
         *  @Return: None
@@ -642,8 +718,8 @@ public class Graphics {
         if(GRAPICS_FLAG_RENDER_CHANGE){
             this.clear();
 
-            for(Drawable drawable: DRAWABLES){
-                if(drawable instanceof Shape){
+            for (Drawable drawable: DRAWABLES){
+                if (drawable instanceof Shape){
                     switch (((Shape) drawable).type){
                         case "RECT":
                             draw_rect((Shape)drawable);
@@ -656,7 +732,7 @@ public class Graphics {
                             break;
                     }
                 }
-                else if(drawable instanceof Sprite){
+                else if (drawable instanceof Sprite){
                     Sprite sprite = (Sprite)drawable;
 
                     int image_pos = get_image_number(sprite.get_resource_name());
@@ -664,9 +740,12 @@ public class Graphics {
                     if(image_pos != -1)
                         draw_sprite(sprite, image_pos);
                 }
-            }
+                else if (drawable instanceof Text){
+                    Text text = (Text)drawable;
 
-            Graphics.GRAPICS_FLAG_RENDER_CHANGE = false;
+                    draw_text(text, g);
+                }
+            }
         }
 
         if(SHAPE_COUNT > 0)
